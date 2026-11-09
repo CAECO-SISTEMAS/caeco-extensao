@@ -73,6 +73,7 @@ h1 span{background:linear-gradient(95deg,#8f94ef 0%,#c3c6ff 55%,#ffffff 100%);-w
 .stat b{display:block;font:800 42px/1 var(--font-display);margin-bottom:8px;letter-spacing:-.02em}
 .stat span{color:var(--muted);font-size:15px;line-height:1.3;display:block}
 .stat.hot b{color:var(--hi)}
+.stat .sh{display:none}
 
 /* Barra de busca e filtros */
 .toolbar{position:sticky;top:0;z-index:5;transition:background .25s,box-shadow .25s,border-color .25s;border-bottom:1px solid transparent}
@@ -125,6 +126,11 @@ dt{color:var(--muted)} dd{margin:0;font-weight:600}
 .links{margin-top:auto;display:flex;flex-wrap:wrap;gap:8px;padding-top:4px;position:relative;z-index:1}
 .links a{display:inline-flex;align-items:center;gap:6px;font-size:14.5px;font-weight:700;text-decoration:none;padding:8px 12px;border-radius:10px;border:1px solid var(--edge);color:var(--accent);background:rgba(255,255,255,.04);transition:background .15s,border-color .15s,color .15s}
 .links a:hover{border-color:var(--accent);background:var(--accent-soft);color:#fff}
+.row{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap}
+.more{display:flex;flex-direction:column;gap:12px;flex:1}
+.toggle{display:none}
+.loadmore{grid-column:1/-1;display:flex;justify-content:center;padding-top:6px}
+.loadmore .btn{cursor:pointer;font:700 15px var(--font-body);border-radius:12px}
 .empty{grid-column:1/-1;padding:44px 20px;border:1.5px dashed var(--edge);border-radius:var(--radius);color:var(--muted);text-align:center}
 .empty button{margin-top:10px;font:700 15px var(--font-body);color:var(--accent);background:none;border:0;cursor:pointer;text-decoration:underline}
 
@@ -172,10 +178,60 @@ footer p{margin:0;max-width:80ch}
   nav a:not(.pill){display:none}
   .lead{font-size:17px}
   .stats{gap:10px}.stat{padding:16px}.stat b{font-size:34px}
-  .grid{grid-template-columns:1fr}
-  .panel{padding:22px 18px;border-radius:20px}
-  .card.vaga .kicker{padding-right:0}
-  .card.vaga .flag{position:static;align-self:flex-start;order:-1}
+  .grid{grid-template-columns:1fr;gap:10px;padding-bottom:28px}
+  /* Topo compacto */
+  .top{margin-top:10px;padding:8px 8px 8px 10px}
+  .hero-body{padding-top:26px;padding-bottom:22px;gap:20px}
+  .eyebrow{margin-bottom:14px;font-size:11px;padding:7px 11px}
+  h1{font-size:34px;margin-bottom:12px}
+  .lead{font-size:16px;margin-bottom:18px;line-height:1.45}
+  .cta{flex-wrap:nowrap;gap:8px}
+  .cta .btn{flex:1;justify-content:center;padding:12px 10px;font-size:15px}
+  .stats{grid-template-columns:repeat(4,1fr);gap:6px}
+  .stat{padding:10px 6px;text-align:center;border-radius:12px}
+  .stat b{font-size:24px;margin-bottom:4px}
+  .stat span{font-size:12px;line-height:1.2}
+  .stat .lg{display:none}.stat .sh{display:block}
+  .eyebrow{display:none}
+  .stat:hover{transform:none}
+  /* Barra fixa enxuta */
+  .toolbar .wrap{padding-top:10px;padding-bottom:10px;gap:8px}
+  .search input{padding:12px 14px 12px 44px;font-size:16px;border-radius:12px}
+  .search svg{left:15px;width:18px;height:18px}
+  .chip{padding:8px 10px 8px 12px;font-size:13px}
+  .listhead{margin:12px 0 10px}
+  /* Cartões recolhidos */
+  .card{padding:14px 16px;gap:8px;border-radius:14px}
+  .card:hover{transform:none}
+  .card h3{font-size:17.5px}
+  .kicker{font-size:12px}
+  .status{font-size:12.5px;padding:5px 9px}
+  .toggle{display:inline-flex;align-items:center;gap:6px;margin-left:auto;appearance:none;background:none;border:0;padding:6px 2px;color:var(--accent);font:700 13.5px var(--font-body);cursor:pointer}
+  .toggle small{font-weight:600;color:var(--faint);font-size:12px}
+  .toggle svg{transition:transform .2s}
+  .card.open .toggle svg{transform:rotate(180deg)}
+  .card .more{display:none}
+  .card.open .more{display:flex;padding-top:4px}
+  .card.vaga .flag{font-size:10px;padding:5px 8px;top:12px;right:12px}
+  /* Passo a passo em carrossel */
+  section.block{padding:22px 0 30px}
+  .sec-head{margin-bottom:14px}
+  .steps{display:flex;overflow-x:auto;scroll-snap-type:x mandatory;gap:10px;margin:0 -18px;padding:0 18px 6px;scrollbar-width:none}
+  .steps::-webkit-scrollbar{display:none}
+  .steps li{flex:0 0 82%;scroll-snap-align:start;padding:16px}
+  .steps li::before{width:34px;height:34px;font-size:16px;margin-bottom:10px}
+  .steps p{font-size:15px}
+  .callout{padding:12px 14px;font-size:14.5px;gap:12px}
+  .callout b{font-size:26px}
+  /* Links oficiais em lista */
+  .official{gap:8px}
+  .official a{padding:12px 14px}
+  .official strong{font-size:16px}
+  .official small{font-size:13px}
+  footer .inner{padding:18px;font-size:13.5px;gap:12px}
+  footer img{width:40px;height:40px}
+  .panel{padding:20px 18px;border-radius:20px}
+  .card.vaga .kicker{padding-right:100px}
   footer .inner{flex-direction:column}
   html{scroll-padding-top:130px}
   .aurora i{filter:blur(80px)}
@@ -205,10 +261,10 @@ footer p{margin:0;max-width:80ch}
       </div>
     </div>
     <div class="stats" aria-label="Resumo">
-      <button class="stat glass hot" type="button" data-go="vaga"><b id="s-vaga">0</b><span>editais com vaga para Economia</span></button>
-      <button class="stat glass" type="button" data-go="eco"><b id="s-eco">0</b><span>ações dos departamentos de Economia</span></button>
-      <button class="stat glass" type="button" data-go="ativo"><b id="s-ativo">0</b><span>ações na lista de 2025</span></button>
-      <button class="stat glass" type="button" data-go="todos"><b id="s-todos">0</b><span>ações registradas no total</span></button>
+      <button class="stat glass hot" type="button" data-go="vaga"><b id="s-vaga">0</b><span class="lg">editais com vaga para Economia</span><span class="sh">com vaga</span></button>
+      <button class="stat glass" type="button" data-go="eco"><b id="s-eco">0</b><span class="lg">ações dos departamentos de Economia</span><span class="sh">de Economia</span></button>
+      <button class="stat glass" type="button" data-go="ativo"><b id="s-ativo">0</b><span class="lg">ações na lista de 2025</span><span class="sh">em 2025</span></button>
+      <button class="stat glass" type="button" data-go="todos"><b id="s-todos">0</b><span class="lg">ações registradas no total</span><span class="sh">no total</span></button>
     </div>
   </div>
 </div>
@@ -401,7 +457,8 @@ const PROJETOS=[
 
 const grid=document.getElementById('grid'), q=document.getElementById('q'), n=document.getElementById('n');
 const chips=[...document.querySelectorAll('.chip')];
-let filtro='todos';
+let filtro='todos', limite=12;
+const PASSO=12;
 const conta=f=>f==='todos'?PROJETOS.length:PROJETOS.filter(p=>p.cats.includes(f)).length;
 const ARROW='<svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17 17 7M8 7h9v9"/></svg>';
 
@@ -417,23 +474,36 @@ function card(p,i){
   k.appendChild(el('span',null,p.tipo));
   c.appendChild(k);
   c.appendChild(el('h3',null,p.nome));
-  c.appendChild(el('span','status'+(/Confer/.test(p.status)?' warn':/Última|Edição|Edições/.test(p.status)&&p.cats.includes('hist')?' old':''),p.status));
-  if(p.desc) c.appendChild(el('p',null,p.desc));
+  const row=el('div','row');
+  row.appendChild(el('span','status'+(/Confer/.test(p.status)?' warn':/Última|Edição|Edições/.test(p.status)&&p.cats.includes('hist')?' old':''),p.status));
+  c.appendChild(row);
+  const body=el('div','more');
+  if(p.desc) body.appendChild(el('p',null,p.desc));
   if(p.info.length){
     const dl=el('dl');
     p.info.forEach(([a,b])=>{dl.appendChild(el('dt',null,a)); dl.appendChild(el('dd',null,b));});
-    c.appendChild(dl);
+    body.appendChild(dl);
   }
   if(p.links.length){
     const l=el('div','links');
     p.links.forEach(([t,u])=>{const a=el('a',null,t); a.insertAdjacentHTML('beforeend',ARROW); a.href=u; a.target='_blank'; a.rel='noopener'; l.appendChild(a);});
-    c.appendChild(l);
+    body.appendChild(l);
+  }
+  if(body.childNodes.length){
+    body.id='m'+i;
+    const t=el('button','toggle'); t.type='button';
+    t.setAttribute('aria-expanded','false'); t.setAttribute('aria-controls',body.id);
+    const extra=[p.links.length?p.links.length+(p.links.length>1?' links':' link'):'',p.info.length?'vagas e infos':''].filter(Boolean).join(' · ');
+    t.innerHTML='<span>Detalhes</span>'+(extra?'<small>'+extra+'</small>':'')+'<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg>';
+    t.onclick=()=>{const o=c.classList.toggle('open'); t.setAttribute('aria-expanded',String(o));};
+    row.appendChild(t);
+    c.appendChild(body);
   }
   return c;
 }
 
 function setFiltro(f){
-  filtro=f;
+  filtro=f; limite=PASSO;
   chips.forEach(x=>x.setAttribute('aria-pressed',String(x.dataset.f===f)));
   render();
 }
@@ -453,7 +523,14 @@ function render(){
     b.onclick=()=>{q.value=''; setFiltro('todos'); q.focus();};
     e.appendChild(el('br')); e.appendChild(b); grid.appendChild(e);
   }
-  lista.forEach((p,i)=>grid.appendChild(card(p,i)));
+  lista.slice(0,limite).forEach((p,i)=>grid.appendChild(card(p,i)));
+  const resta=lista.length-limite;
+  if(resta>0){
+    const w=el('div','loadmore'), b=el('button','btn ghost glass');
+    b.type='button'; b.textContent='Mostrar mais '+Math.min(PASSO,resta)+' de '+resta+' restantes';
+    b.onclick=()=>{const de=limite; limite+=PASSO; render(); const prox=grid.children[de]; if(prox){prox.setAttribute('tabindex','-1'); prox.focus({preventScroll:true});}};
+    w.appendChild(b); grid.appendChild(w);
+  }
   n.textContent=lista.length+(lista.length===1?' ação encontrada':' ações encontradas');
 }
 
@@ -463,7 +540,7 @@ document.querySelectorAll('[data-go]').forEach(b=>b.addEventListener('click',e=>
   setFiltro(b.dataset.go);
   if(b.tagName==='BUTTON') document.getElementById('projetos').scrollIntoView();
 }));
-q.addEventListener('input',render);
+q.addEventListener('input',()=>{limite=PASSO; render();});
 
 /* Brilho que acompanha o mouse nos cartões */
 grid.addEventListener('pointermove',e=>{
