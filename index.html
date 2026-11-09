@@ -102,7 +102,7 @@ details.legend summary::after{content:" +"}
 details.legend[open] summary::after{content:" −"}
 details.legend p{margin:10px 0 0;max-width:72ch;border-radius:12px;padding:12px 14px}
 details.legend b{color:var(--ink)}
-.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:18px;padding-bottom:40px}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:18px;padding-bottom:40px;align-items:start}
 .card{position:relative;border-radius:var(--radius);padding:22px;display:flex;flex-direction:column;gap:12px;overflow:hidden;transition:transform .2s,box-shadow .2s,border-color .2s,background .2s;animation:in .35s ease both}
 .card::before{content:"";position:absolute;inset:0;border-radius:inherit;background:linear-gradient(140deg,rgba(255,255,255,.04),transparent 40%);pointer-events:none}
 .card::after{content:"";position:absolute;width:220px;height:220px;border-radius:50%;left:var(--mx,-999px);top:var(--my,-999px);transform:translate(-50%,-50%);background:radial-gradient(circle,rgba(158,162,255,.07),transparent 65%);pointer-events:none;opacity:0;transition:opacity .25s}
@@ -128,6 +128,9 @@ dt{color:var(--muted)} dd{margin:0;font-weight:600}
 .links a:hover{border-color:var(--accent);background:var(--accent-soft);color:#fff}
 .row{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap}
 .more{display:flex;flex-direction:column;gap:12px;flex:1}
+.card p.nota{font-size:14.5px;color:var(--muted);line-height:1.45}
+.links.auto a{color:var(--muted);border-style:dashed;font-size:13.5px;padding:7px 10px}
+.links.auto a:hover{color:#fff}
 .toggle{display:none}
 .loadmore{grid-column:1/-1;display:flex;justify-content:center;padding-top:6px}
 .loadmore .btn{cursor:pointer;font:700 15px var(--font-body);border-radius:12px}
@@ -484,16 +487,23 @@ function card(p,i){
     p.info.forEach(([a,b])=>{dl.appendChild(el('dt',null,a)); dl.appendChild(el('dd',null,b));});
     body.appendChild(dl);
   }
-  if(p.links.length){
-    const l=el('div','links');
-    p.links.forEach(([t,u])=>{const a=el('a',null,t); a.insertAdjacentHTML('beforeend',ARROW); a.href=u; a.target='_blank'; a.rel='noopener'; l.appendChild(a);});
+  if(!p.desc && !p.info.length){
+    body.appendChild(el('p','nota','A FEAAC divulga só o nome desta ação. Para saber como participar, procure a coordenação ou fale com o CAECO.'));
+  }
+  const links=p.links.length?p.links:[
+    ['Buscar no Google','https://www.google.com/search?q='+encodeURIComponent('"'+p.nome.split(',')[0]+'" UFC extensão')],
+    ['Lista da FEAAC','https://feaac.ufc.br/pt/projeto-de-extensao/']
+  ];
+  {
+    const l=el('div','links'+(p.links.length?'':' auto'));
+    links.forEach(([t,u])=>{const a=el('a',null,t); a.insertAdjacentHTML('beforeend',ARROW); a.href=u; a.target='_blank'; a.rel='noopener'; l.appendChild(a);});
     body.appendChild(l);
   }
   if(body.childNodes.length){
     body.id='m'+i;
     const t=el('button','toggle'); t.type='button';
     t.setAttribute('aria-expanded','false'); t.setAttribute('aria-controls',body.id);
-    const extra=[p.links.length?p.links.length+(p.links.length>1?' links':' link'):'',p.info.length?'vagas e infos':''].filter(Boolean).join(' · ');
+    const extra=[p.links.length?p.links.length+(p.links.length>1?' links':' link'):'',p.info.length?'vagas e infos':'',(!p.links.length&&!p.info.length&&!p.desc)?'como encontrar':''].filter(Boolean).join(' · ');
     t.innerHTML='<span>Detalhes</span>'+(extra?'<small>'+extra+'</small>':'')+'<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg>';
     t.onclick=()=>{const o=c.classList.toggle('open'); t.setAttribute('aria-expanded',String(o));};
     if(vaga){c.classList.add('open'); t.setAttribute('aria-expanded','true');}
