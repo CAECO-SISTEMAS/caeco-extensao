@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>CAECO Extensão</title>
+<link rel="icon" type="image/png" href="logo-caeco.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@600;700&family=Source+Sans+3:wght@400;600&display=swap" rel="stylesheet">
+<style>
+/* Layout: cabeçalho fino, busca + filtros no topo, lista de projetos em grade de cartões, bloco de links oficiais ao fim. */
+:root{
+  --paper:#f5f4ef; --surface:#ffffff; --ink:#15221f; --muted:#56635f;
+  --accent:#2a2891; --accent-ink:#ffffff; --signal:#b4530a; --line:#d9d7cc;
+  --font-display:"Bricolage Grotesque","Segoe UI",system-ui,sans-serif;
+  --font-body:"Source Sans 3","Segoe UI",system-ui,sans-serif;
+  color-scheme:light;
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --paper:#101816; --surface:#17211e; --ink:#eaf0ed; --muted:#9db0aa;
+    --accent:#a3a8ff; --accent-ink:#0d0c3b; --signal:#f0a35e; --line:#2b3a36;
+    color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --paper:#101816; --surface:#17211e; --ink:#eaf0ed; --muted:#9db0aa;
+  --accent:#a3a8ff; --accent-ink:#0d0c3b; --signal:#f0a35e; --line:#2b3a36;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{background:var(--paper);color:var(--ink);font:400 17px/1.55 var(--font-body)}
+a{color:var(--accent)}
+a:focus-visible,button:focus-visible,input:focus-visible{outline:3px solid var(--signal);outline-offset:2px}
+.wrap{max-width:1040px;margin:0 auto;padding:0 20px}
+header.top{border-bottom:1px solid var(--line);background:var(--surface)}
+header.top .wrap{display:flex;flex-wrap:wrap;gap:12px 24px;align-items:center;justify-content:space-between;padding-top:14px;padding-bottom:14px}
+.brand{display:flex;align-items:center;gap:12px;font:700 20px/1 var(--font-display);letter-spacing:.02em;text-decoration:none;color:var(--ink)}
+.brand img{width:48px;height:48px;display:block}
+.brand span{color:var(--accent)}
+nav{display:flex;flex-wrap:wrap;gap:8px 18px;align-items:center}
+nav a{color:var(--ink);text-decoration:none;font-weight:600;font-size:15px}
+nav a:hover{text-decoration:underline}
+nav a.btn{color:var(--accent-ink)}
+.btn{display:inline-block;background:var(--accent);color:var(--accent-ink);padding:9px 16px;border-radius:6px;font-weight:600;font-size:15px;text-decoration:none}
+.btn:hover{filter:brightness(1.1);text-decoration:none}
+.intro{padding:40px 0 20px}
+h1{font:700 clamp(30px,5vw,46px)/1.08 var(--font-display);margin:0 0 12px;text-wrap:balance;max-width:20ch}
+.intro p{max-width:62ch;margin:0 0 20px;color:var(--muted);font-size:18px}
+.tools{display:flex;flex-wrap:wrap;gap:12px;align-items:center;margin-bottom:8px}
+.search{flex:1 1 280px}
+.search label{display:block;font-weight:600;font-size:14px;color:var(--muted);margin-bottom:6px}
+.search input{width:100%;padding:12px 14px;font:inherit;border:1.5px solid var(--line);border-radius:6px;background:var(--surface);color:var(--ink)}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chip{font:600 14px/1 var(--font-body);padding:10px 14px;border-radius:999px;border:1.5px solid var(--line);background:var(--surface);color:var(--ink);cursor:pointer}
+.chip[aria-pressed="true"]{background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}
+.legend{color:var(--muted);font-size:14px;margin:14px 0 0;max-width:80ch}
+.count{margin:18px 0 14px;font:600 15px var(--font-body);color:var(--muted)}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(310px,1fr));gap:16px;padding-bottom:20px}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:18px;display:flex;flex-direction:column;gap:10px;border-left:5px solid var(--line)}
+.card.vaga{border-left-color:var(--accent)}
+.card h3{font:700 19px/1.2 var(--font-display);margin:0;text-wrap:balance}
+.meta{display:flex;flex-wrap:wrap;gap:6px}
+.tag{font:600 12.5px/1 var(--font-body);padding:5px 9px;border-radius:4px;background:var(--paper);border:1px solid var(--line);color:var(--muted);text-transform:uppercase;letter-spacing:.04em}
+.tag.ok{background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}
+.tag.eco{color:var(--accent);border-color:var(--accent)}
+.tag.warn{color:var(--signal);border-color:var(--signal)}
+.card p{margin:0;font-size:16px}
+dl{margin:0;display:grid;grid-template-columns:auto 1fr;gap:4px 12px;font-size:15px}
+dt{color:var(--muted)} dd{margin:0}
+.links{margin-top:auto;display:flex;flex-wrap:wrap;gap:4px 14px;padding-top:6px}
+.links a{font-size:15px;font-weight:600}
+.empty{grid-column:1/-1;padding:30px;border:1px dashed var(--line);border-radius:8px;color:var(--muted);text-align:center}
+section.block{padding:34px 0;border-top:1px solid var(--line)}
+h2{font:700 26px/1.15 var(--font-display);margin:0 0 14px}
+.steps{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:16px;padding:0;margin:0;list-style:none;counter-reset:s}
+.steps li{counter-increment:s;background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:16px}
+.steps li::before{content:counter(s);display:inline-block;font:700 14px var(--font-display);width:26px;height:26px;line-height:26px;text-align:center;border-radius:50%;background:var(--accent);color:var(--accent-ink);margin-bottom:8px}
+.official{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:12px}
+.official a{display:block;background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:14px 16px;text-decoration:none;color:var(--ink)}
+.official a strong{display:block;color:var(--accent);font-family:var(--font-display);font-size:18px}
+.official a:hover{border-color:var(--accent)}
+.official small{color:var(--muted)}
+footer{border-top:1px solid var(--line);padding:24px 0 40px;color:var(--muted);font-size:14px}
+</style>
+</head>
+<body>
+<header class="top">
+  <div class="wrap">
+    <a class="brand" href="#inicio"><img src="logo-caeco.png" alt="Logo do CAECO UFC" width="48" height="48"><span>CAECO<b style="color:var(--accent)">.</b>extensão</span></a>
+    <nav aria-label="Principal">
+      <a href="#projetos">Projetos</a>
+      <a href="#como-participar">Como participar</a>
+      <a href="#oficiais">Links oficiais</a>
+      <a class="btn" href="https://www.ufc.br" target="_blank" rel="noopener">Página oficial da UFC</a>
+    </nav>
+  </div>
+</header>
+
+<main id="inicio">
+  <div class="wrap">
+    <div class="intro">
+      <h1>Projetos de extensão para quem estuda Economia na UFC</h1>
+      <p>Todas as ações de extensão listadas pela FEAAC, os editais com vaga para Economia e o link da fonte oficial de cada uma. Comece pelo filtro "Departamentos de Economia" se quiser ver só o que vem da área.</p>
+      <div class="tools">
+        <div class="search">
+          <label for="q">Buscar</label>
+          <input id="q" type="search" placeholder="Nome, tema ou sigla do departamento" autocomplete="off">
+        </div>
+      </div>
+      <div class="chips" role="group" aria-label="Filtrar projetos">
+        <button class="chip" data-f="todos" aria-pressed="true">Todos</button>
+        <button class="chip" data-f="vaga" aria-pressed="false">Edital com vaga para Economia</button>
+        <button class="chip" data-f="eco" aria-pressed="false">Departamentos de Economia</button>
+        <button class="chip" data-f="ativo" aria-pressed="false">Na lista de 2025</button>
+        <button class="chip" data-f="evento" aria-pressed="false">Seminários e eventos</button>
+        <button class="chip" data-f="hist" aria-pressed="false">Registrados antes de 2025</button>
+      </div>
+      <p class="legend">Siglas usadas pela FEAAC: DTE (Teoria Econômica), DEA (Economia Aplicada), DA (Administração), DC (Contabilidade). "Registrados antes de 2025" são ações que aparecem nas listas de 2019 a 2024 e não estão na lista de 2025; pergunte ao CAECO se seguem ativas.</p>
+    </div>
+
+    <section id="projetos" aria-labelledby="h-proj" style="padding-bottom:10px">
+      <h2 id="h-proj" class="count"><span id="n"></span></h2>
+      <div class="grid" id="grid"></div>
+    </section>
+
+    <section class="block" id="como-participar">
+      <h2>Como participar</h2>
+      <ol class="steps">
+        <li><strong>Entenda a regra.</strong><br>Quem faz graduação na UFC precisa cumprir no mínimo 10% da carga horária do curso em extensão. Para valer no histórico, você tem que fazer parte da equipe da ação.</li>
+        <li><strong>Acompanhe os editais.</strong><br>A FEAAC e a Pró-Reitoria de Extensão (PREX) divulgam os editais de bolsas e de seleção de Agentes UFC. Os links de cada edital estão nos cartões acima.</li>
+        <li><strong>Inscreva-se e confirme.</strong><br>Leia vagas, carga horária mensal e requisitos no próprio edital. Para projetos sem edital, procure a coordenação pelo Instagram ou pela FEAAC.</li>
+      </ol>
+    </section>
+
+    <section class="block" id="oficiais">
+      <h2>Links oficiais</h2>
+      <div class="official">
+        <a href="https://www.ufc.br" target="_blank" rel="noopener"><strong>Universidade Federal do Ceará</strong><small>Página oficial da UFC</small></a>
+        <a href="https://prex.ufc.br" target="_blank" rel="noopener"><strong>Pró-Reitoria de Extensão</strong><small>Editais, bolsas e certificados</small></a>
+        <a href="https://feaac.ufc.br" target="_blank" rel="noopener"><strong>FEAAC</strong><small>Faculdade de Economia, Administração, Atuária e Contabilidade</small></a>
+        <a href="https://feaac.ufc.br/pt/projeto-de-extensao/" target="_blank" rel="noopener"><strong>Projetos de extensão da FEAAC</strong><small>Lista oficial, de onde saiu este site</small></a>
+      </div>
+    </section>
+  </div>
+</main>
+
+<footer>
+  <div class="wrap">
+    Site do Centro Acadêmico de Economia (CAECO), UFC. Lista de projetos conferida na página de extensão da FEAAC em 09/11/2026; editais vêm das páginas da PREX e da FEAAC. Vagas e prazos mudam a cada edital, então confirme sempre no documento oficial. Este site não é um canal oficial da UFC.
+  </div>
+</footer>
+
+<script>
+/* Para atualizar o site, edite só a lista PROJETOS.
+   cats: vaga (edital com vaga p/ Economia), eco (DTE/DEA), ativo (lista 2025), evento, hist (antes de 2025). */
+const F="https://feaac.ufc.br/wp-content/uploads/";
+const IG=u=>["Instagram","https://www.instagram.com/"+u+"/"];
+const P=(nome,cats,depto,tipo,status,info,links,desc)=>({nome,cats,depto,tipo,status,info:info||[],links:links||[],desc:desc||""});
+const PROJETOS=[
+  /* Editais */
+  P("Práticas Contábeis e Tributárias",["vaga"],"","Edital Agentes UFC","Conferir próximo edital",
+    [["Economia","5 vagas voluntárias no edital de 2025"],["Edital 2026","Vagas abertas só para Ciências Contábeis (5)"]],
+    [["Edital 2025","https://prex.ufc.br/wp-content/uploads/2025/05/20250428-edital-praticas-contabeis-e-tributarias.pdf"],["Edital jul/2026",F+"2026/07/20260720-praticas-contabeis-e-tributarias-02-2026-assinado.pdf"]],
+    "Estudantes fazem pesquisa teórica e visitas de campo sobre temas contábeis e tributários. Alunos de Economia entram como Agentes UFC de Cidadania Financeira Fiscal."),
+  P("CJIP ACCS Proteção Social",["vaga"],"","Edital Agentes UFC","Edital 2026",
+    [["Economia","2 vagas"],["Carga horária","20h por mês"]],
+    [["Edital 2026","https://prex.ufc.br/wp-content/uploads/2026/03/edital-cjip-accs-2026-corrigido.pdf"]],
+    "Ação curricular de extensão na categoria Agente de Proteção Social, ligada à Clínica Jurídica de Inovação Pedagógica."),
+  P("CAAB nas Escolas Viva",["vaga"],"FEAAC","Edital Agentes UFC","Conferir próximo edital",
+    [["Economia","5 vagas no edital de 2025"],["Carga horária","16h por mês"],["Reserva","2 vagas para PcD, todos os cursos"]],
+    [["Edital 2025","https://prex.ufc.br/wp-content/uploads/2025/09/edital-caab-nas-escolas-viva-2025-1.pdf"]]),
+  P("ACCS Apoio à Gestão nas Organizações",["vaga"],"FEAAC","Edital Agentes UFC","Edital 2025",
+    [["Vagas","Veja a tabela por curso no edital"]],
+    [["Edital 2025",F+"2025/07/edital-accs-apoio-a-gestao-2025-v3-assinado.pdf"]],
+    "Ação curricular de extensão voltada ao apoio à gestão de organizações."),
+  P("Bolsas de Extensão 2027",["vaga"],"PREX","Edital PREX","Edital 2027",
+    [["Edital","09/2026 PREX"],["Quem inscreve","Coordenação do projeto"]],
+    [["Edital 09/2026","https://prex.ufc.br/wp-content/uploads/2026/08/sei-6533719-edital-09-2026-prex-7.pdf"]],
+    "Programa de Bolsas de Extensão Universitária 2027. Os coordenadores inscrevem as ações e abrem as vagas de bolsista."),
+
+  /* Lista oficial 2025.1 */
+  P("ADM2Digital",["ativo"],"DA","Projeto de extensão","Lista 2025",[],[["Projeto (PDF)",F+"2025/06/projeto-adm2digital-sigaa-2025.pdf"],IG("adm2digital")]),
+  P("Contextus, Revista Contemporânea de Economia e Gestão",["ativo"],"DA","Projeto de extensão","Lista 2025",[],[IG("REVISTACONTEXTUS"),["LinkedIn","https://www.linkedin.com/in/contextus-revista-contempor%C3%A2nea-de-economia-e-gest%C3%A3o/"]]),
+  P("Experiências Inspiradoras",["ativo"],"DA","Projeto de extensão","Lista 2025"),
+  P("PET na Escola",["ativo"],"DA","Projeto de extensão","Lista 2025"),
+  P("PET nas Organizações",["ativo"],"DA","Projeto de extensão","Lista 2025"),
+  P("PET Connect",["ativo"],"DA","Projeto de extensão","Lista 2025"),
+  P("PET Nexus",["ativo"],"DA","Projeto de extensão","Lista 2025"),
+  P("Departamento de Administração & Sociedade",["ativo"],"DA","Projeto de extensão","Lista 2025"),
+  P("Ação Educativa Financeira Infanto Juvenil na Escola Pública Alencarina",["ativo"],"DA","Projeto de extensão","Lista 2025",[],[],"Educação financeira para crianças e jovens em escola pública."),
+  P("Reciclando Resíduos Sólidos",["ativo"],"FEAAC","Projeto de extensão","Lista 2025",[["Cursos do edital 2025","Administração, Contábeis, Ciências Ambientais e Eng. Ambiental e Sanitária"]],[["Edital 2025","https://prex.ufc.br/wp-content/uploads/2025/04/edital-reciclando20resicc81duos20socc81lidos-faculdade20de20economia20.pdf"]]),
+  P("Crie_! FEAAC, Hub e Switch de Inovação",["ativo"],"FEAAC","Projeto de extensão","Lista 2025"),
+  P("Programa Meu CRC",["ativo"],"DC","Programa de extensão","Lista 2025",[],[],"Em 2025 teve a ação \"Nos bastidores da gestão contábil/fiscal\"."),
+  P("PROGEPA, Extensão e Pesquisa em Economia e Meio Ambiente",["ativo","eco"],"DTE","Programa de extensão","Lista 2025"),
+  P("Clube dos Libertos Black Network",["ativo"],"FEAAC","Projeto de extensão","Lista 2025",[],[["Projeto (PDF)",F+"2025/05/projeto-de-extensao-clube-dos-libertos.pdf"],IG("clubedoslibertos")]),
+  P("Cine Viès: Cinema e Debate sobre o Mundo do Trabalho",["ativo","eco"],"DTE","Projeto de extensão","Lista 2025",[["Coordenação","Júlio Ramon Teles da Ponte (registro de 2022)"]],[["Resumo (PDF)",F+"2025/06/resumo-cine-vies.pdf"],["Facebook","https://www.facebook.com/ocinevies/"]]),
+  P("PROSPECTO, Grupo de Extensão em Economia Comportamental",["ativo","eco"],"DTE","Grupo de extensão","Lista 2025",[["Coordenação","Eveline Barbosa Silva Carvalho (registro de 2022)"]],[["Site","http://www.prospecto.ufc.br/"],IG("prospectoufc")]),
+  P("Auditoria: inclusão, construção e transformação de carreira e de vida",["ativo"],"DC","Projeto de extensão","Lista 2025",[],[IG("pea_ufc")]),
+  P("Rodas de Conversa com Pessoas do Trabalho de Cuidado UFC",["ativo"],"FEAAC","Programa de extensão","Lista 2025",[],[["Resumo (PDF)",F+"2025/06/extensAo-resumo.pdf"]]),
+  P("Desenvolvimento e Desigualdades",["ativo"],"FEAAC","Projeto de extensão","Lista 2025",
+    [["Linha","Emprego, ocupação e renda"],["Financiamento","Interno (UFC)"]],
+    [["Resumo (PDF)",F+"2025/06/resumo-extensao-para-feaac-desenvolvimento-e-desigualdades-final.pdf"]],
+    "Área temática principal Educação, secundária Trabalho."),
+  P("Clínica Jurídica de Inovação Pedagógica (CJIP)",["ativo"],"FEAAC","Projeto de extensão","Lista 2025",[],[["Projeto (PDF)",F+"2025/06/projeto-de-extensAo-clInica-jurIdica.pdf"],IG("clinicajuridicaufc")]),
+  P("GEPEI, Grupo de Estudos e Pesquisa em Economia Internacional",["ativo","eco"],"DEA","Grupo de extensão","Lista 2025"),
+  P("Ordem Espontânea",["ativo"],"FEAAC","Projeto de extensão","Lista 2025"),
+  P("Accont Empresa Júnior",["ativo"],"DC","Empresa júnior","Lista 2025"),
+
+  /* Eventos 2025 */
+  P("Seminários de Legislação Previdenciária (I e II)",["evento"],"FEAAC","Seminário","Edições de 2025",[],[],"Benefícios assistenciais e previdenciários."),
+  P("Seminários de Direito Tributário (I e II)",["evento"],"FEAAC","Seminário","Edições de 2025",[],[],"Os desafios da Reforma Tributária no Brasil e seus impactos contábeis e jurídicos."),
+  P("IV Seminário de Direito Público e Privado",["evento"],"FEAAC","Seminário","Edição de 2025",[],[],"Convergências entre os setores público e privado."),
+  P("Ciclo de Palestras: a profissão do(a) auditor(a)",["evento"],"DC","Ciclo de palestras","Edição de 2025"),
+
+  /* Antes de 2025 */
+  P("GESOL, Grupo de Extensão em Economia Solidária",["hist","eco"],"DTE","Grupo de extensão","Última lista: 2024",[["Coordenação","André Vasconcelos Ferreira"],["Desde","2011"]],[["Página de projetos","https://feaac.ufc.br/pt/projeto-de-extensao/"]]),
+  P("Grupo de Apoio a Empreendimentos Ecossolidários",["hist","eco"],"DTE","Grupo de extensão","Última lista: 2024",[["Coordenação","Júlio Ramon Teles da Ponte"],["Desde","2016"]]),
+  P("Observatório dos Bancos Centrais",["hist","eco"],"DTE","Observatório","Última lista: 2024",[["Coordenação","Sylvio Antônio Kappes"]]),
+  P("MADE, Grupo de Extensão de Macroeconomia e Desenvolvimento",["hist","eco"],"DTE","Grupo de extensão","Última lista: 2024",[["Coordenação","Inez Silvia Batista Castro"]]),
+  P("GEDAI, Direito Internacional em Economia",["hist","eco"],"DTE","Grupo de estudos e extensão","Última lista: 2024",[["Coordenação","Jair do Amaral Filho"],["Desde","2013"]]),
+  P("Acompanhamento e Análise do Planejamento e Orçamento do Ceará e de Fortaleza",["hist","eco"],"DTE","Projeto de extensão","Última lista: 2024",[["Coordenação","Fernando José Pires de Sousa"]]),
+  P("Liberalismo, Mercado e Liberdade Individual",["hist","eco"],"DEA","Projeto de extensão","Última lista: 2024",[["Coordenação","Elano Arruda"],["Desde","2016"]]),
+  P("Invest Jr.",["hist"],"FEAAC","Empresa júnior","Última lista: 2024"),
+  P("Núcleo de Conjuntura Brasileira",["hist","eco"],"DTE","Núcleo","Última lista: 2022",[["Coordenação","Sylvio Antônio Kappes"]]),
+  P("MACRON, Grupo de Estudos de Macroeconomia e Conjuntura",["hist","eco"],"DTE","Grupo de estudos","Última lista: 2019",[["Coordenação","Inez Silvia Batista Castro"],["Desde","2020"]]),
+  P("Viès, Núcleo de Economia Política",["hist","eco"],"DTE","Núcleo","Última lista: 2019",[["Coordenação","Fábio Maia Sobral"],["Desde","2011"]]),
+  P("ECOS, Laboratório de Variáveis em Economia Ecológica",["hist","eco"],"DTE","Laboratório","Última lista: 2019",[["Coordenação","Fábio Maia Sobral"],["Desde","2019"]]),
+  P("Observatório de Políticas Públicas",["hist","eco"],"DTE","Observatório","Última lista: 2021",[["Coordenação","Fernando José Pires de Sousa"]]),
+  P("Rede Solidária de Conhecimentos (REDES)",["hist","eco"],"DTE","Rede de extensão","Última lista: 2019",[["Coordenação","André Vasconcelos Ferreira"],["Desde","2017"]]),
+  P("Educação Fiscal e Cidadania, NAF UFC",["hist"],"DC","Núcleo de apoio","Última lista: 2024",[["Desde","2016"]]),
+  P("Olimpíada Brasileira de Educação Financeira",["hist"],"DC","Projeto de extensão","Última lista: 2019",[["Coordenação","Alan Santos de Oliveira"]]),
+
+  /* Economia (DTE/DEA), anos anteriores */
+  P("Biblioteca de Políticas Públicas, História e Literatura (Campus Benfica)",["hist","eco"],"DTE","Projeto de extensão","Última lista: 2019",[["Coordenação","Fernando José Pires de Sousa"],["Desde","2014"]]),
+  P("Acompanhamento e Avaliação de Pequenos Produtores de Fortaleza",["hist","eco"],"DTE","Projeto de extensão","Última lista: 2022",[["Coordenação","Eveline Barbosa Silva Carvalho"]]),
+  P("Ciclo de Debates: Diálogo com os candidatos à prefeitura de Fortaleza 2020",["hist","eco"],"DTE","Ciclo de debates","Edição de 2020",[["Coordenação","Fernando José Pires de Sousa"]]),
+  P("Introdução às Ferramentas Digitais de Comercialização",["hist","eco"],"DTE","Projeto de extensão","Última lista: 2020",[["Coordenação","André Vasconcelos Ferreira"],["Desde","2020"]]),
+  P("Ciclo de Formação Online: Educação Conectada",["hist","eco"],"DEA","Curso online","Última lista: 2020",[["Coordenação","Guilherme Diniz Irffi"],["Desde","2020"]]),
+  P("PROSPECTO, Núcleo de Psicologia do Consumidor",["hist","eco"],"DTE","Núcleo","Última lista: 2019",[["Coordenação","Eveline Barbosa Silva Carvalho"],["Desde","2017"]]),
+
+  /* Contabilidade, anos anteriores */
+  P("LAPEC, Laboratório de Perícias e Cálculos Judiciais",["hist"],"DC","Laboratório","Última lista: 2024"),
+  P("Let's Cont, Laboratório de Estudos e Produção de Conteúdo Contábil",["hist"],"DC","Laboratório","Última lista: 2024",[["Coordenação","Carlos Adriano Santos Gomes Gordiano"]]),
+  P("COLID, Coletivo Contábil de Inclusão e Diversidade",["hist"],"DC","Coletivo","Última lista: 2024",[["Coordenação","Carlos Adriano Santos Gomes Gordiano"]]),
+  P("Laboratório de observação do setor público: do planejamento à execução dos gastos",["hist"],"DC","Laboratório","Última lista: 2024"),
+  P("LEEC, Laboratório de Estudos da Empresa em Crise",["hist"],"DC","Laboratório","Última lista: 2024"),
+  P("Trabalho no Cinema",["hist"],"DC","Projeto de extensão","Última lista: 2024"),
+  P("Ciclo de Palestras em Auditoria",["hist"],"DC","Ciclo de palestras","Última lista: 2024"),
+  P("Programa de Educação Financeira Continuada",["hist"],"DC","Programa de extensão","Última lista: 2022",[["Coordenação","Denise Maria Moreira Chagas Corrêa"]]),
+  P("Integração Universidade-Empresas",["hist"],"DC","Projeto de extensão","Última lista: 2019",[["Coordenação","Vera Maria Rodrigues Ponte"],["Desde","2012"]]),
+  P("Protótipos Tecnológicos para Micro e Pequenas Empresas",["hist"],"DC","Projeto de extensão","Última lista: 2020",[["Coordenação","Liliane Maria Ramalho de Castro Siqueira"]]),
+  P("Utilizando o Prezi Vídeo para fazer videoaulas",["hist"],"DC","Projeto de extensão","Última lista: 2020",[["Coordenação","Eduardo Rodrigues Linhares"],["Desde","2020"]]),
+
+  /* Administração, Atuária e Secretariado, anos anteriores */
+  P("Atuária em Destaque",["hist"],"DA","Projeto de extensão","Última lista: 2023",[["Coordenação","Alane Siqueira Rocha"]],[],"Divulgação do curso de Ciências Atuariais da UFC e de notícias da área."),
+  P("Podcast Atuarial UFC",["hist"],"DA","Projeto de extensão","Última lista: 2023",[["Coordenação","Alana Katielli Nogueira Azevedo"]]),
+  P("Registro de Empresa Júnior (Inova)",["hist"],"DA","Projeto de extensão","Última lista: 2022",[["Coordenação","Francisco Vicente Sales Melo"]]),
+  P("Apoio ao Desenvolvimento Institucional de OSCs",["hist"],"DA","Projeto de extensão","Última lista: 2022",[["Coordenação","José Carlos Lázaro da Silva Filho"]],[],"Pesquisa e apoio a organizações da sociedade civil e empreendimentos sociais."),
+  P("Secretariado Executivo em Movimento: diálogo e ação (SEM)",["hist"],"DA","Projeto de extensão","Última lista: 2021",[["Coordenação","Conceição de Maria Pinheiro Barros"],["Desde","2018"]]),
+  P("NEPES, Núcleo de Estudos e Pesquisas em Secretariado Executivo",["hist"],"DA","Núcleo","Última lista: 2020",[["Coordenação","Conceição de Maria Pinheiro Barros"],["Desde","2010"]]),
+  P("Práticas do Secretariado Executivo em Home Office",["hist"],"DA","Projeto de extensão","Última lista: 2021",[["Coordenação","Sonia Regina Amorim Soares de Alcântara"]]),
+  P("Empreendedorismo e Voluntariado",["hist"],"DA","Projeto de extensão","Última lista: 2020",[["Coordenação","Sonia Regina Amorim Soares de Alcântara"],["Desde","2013"]]),
+  P("A prática do Secretariado Executivo na formação discente",["hist"],"DA","Projeto de extensão","Última lista: 2021",[["Coordenação","Elaine Freitas de Sousa"]],[],"Articulação de competências ao atuar no condomínio de empreendedorismo e inovação da UFC."),
+  P("Gestão, Consultoria e Assessoria em Secretariado Executivo",["hist"],"DA","Projeto de extensão","Última lista: 2020",[["Coordenação","Elaine Freitas de Sousa"]]),
+
+  /* Seminários e ações da diretoria, 2024 */
+  P("I Seminário de Direito Administrativo",["evento","hist"],"FEAAC","Seminário","Edição de 2024",[],[],"Direito Administrativo no contexto político-jurídico brasileiro."),
+  P("I e II Seminários de Direito Público e Privado",["evento","hist"],"FEAAC","Seminário","Edições de 2024",[],[],"Diálogo entre Direito e Contabilidade."),
+  P("Práticas sociojurídicas na comunidade",["hist"],"FEAAC","Projeto de extensão","Última lista: 2024")
+];
+
+const grid=document.getElementById('grid'), q=document.getElementById('q'), n=document.getElementById('n');
+let filtro='todos';
+
+function el(tag, cls, text){const e=document.createElement(tag); if(cls) e.className=cls; if(text!==undefined) e.textContent=text; return e;}
+
+function card(p){
+  const c=el('article','card'+(p.cats.includes('vaga')?' vaga':''));
+  c.appendChild(el('h3',null,p.nome));
+  const m=el('div','meta');
+  m.appendChild(el('span','tag'+(p.cats.includes('vaga')?' ok':''),p.tipo));
+  if(p.depto) m.appendChild(el('span','tag'+(p.cats.includes('eco')?' eco':''),p.depto));
+  m.appendChild(el('span','tag'+(/Confer|Última/.test(p.status)?' warn':''),p.status));
+  c.appendChild(m);
+  if(p.desc) c.appendChild(el('p',null,p.desc));
+  if(p.info.length){
+    const dl=el('dl');
+    p.info.forEach(([k,v])=>{dl.appendChild(el('dt',null,k)); dl.appendChild(el('dd',null,v));});
+    c.appendChild(dl);
+  }
+  if(p.links.length){
+    const l=el('div','links');
+    p.links.forEach(([t,u])=>{const a=el('a',null,t+' ↗'); a.href=u; a.target='_blank'; a.rel='noopener'; l.appendChild(a);});
+    c.appendChild(l);
+  }
+  return c;
+}
+
+function render(){
+  const t=q.value.trim().toLowerCase();
+  const lista=PROJETOS.filter(p=>{
+    if(filtro!=='todos' && !p.cats.includes(filtro)) return false;
+    if(!t) return true;
+    const txt=(p.nome+' '+p.desc+' '+p.tipo+' '+p.depto+' '+p.info.map(i=>i.join(' ')).join(' ')).toLowerCase();
+    return txt.includes(t);
+  });
+  grid.replaceChildren();
+  if(!lista.length){grid.appendChild(el('div','empty','Nenhuma ação encontrada. Tente outra palavra ou volte para "Todos".'));}
+  lista.forEach(p=>grid.appendChild(card(p)));
+  n.textContent=lista.length+(lista.length===1?' ação encontrada':' ações encontradas');
+}
+
+document.querySelectorAll('.chip').forEach(b=>b.addEventListener('click',()=>{
+  filtro=b.dataset.f;
+  document.querySelectorAll('.chip').forEach(x=>x.setAttribute('aria-pressed',String(x===b)));
+  render();
+}));
+q.addEventListener('input',render);
+render();
+</script>
+</body>
+</html>
