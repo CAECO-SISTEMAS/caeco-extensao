@@ -4,154 +4,282 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>CAECO Extensão</title>
+<meta name="description" content="Projetos de extensão da FEAAC e editais com vaga para estudantes de Economia da UFC, reunidos pelo CAECO.">
+<meta name="theme-color" content="#070818">
 <link rel="icon" type="image/png" href="logo-caeco.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@600;700&family=Source+Sans+3:wght@400;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,700;12..96,800&family=Source+Sans+3:wght@400;600;700&display=swap" rel="stylesheet">
 <style>
-/* Layout: cabeçalho fino, busca + filtros no topo, lista de projetos em grade de cartões, bloco de links oficiais ao fim. */
+/* Tema escuro único com glassmorphism: fundo com brilhos fixos, superfícies translúcidas com blur. */
 :root{
-  --paper:#f5f4ef; --surface:#ffffff; --ink:#15221f; --muted:#56635f;
-  --accent:#2a2891; --accent-ink:#ffffff; --signal:#b4530a; --line:#d9d7cc;
+  --bg:#070818; --ink:#eef0ff; --muted:#a7abd0; --faint:#7d82ad;
+  --glass:rgba(255,255,255,.055); --glass-2:rgba(255,255,255,.09); --glass-strong:rgba(18,20,48,.72);
+  --edge:rgba(255,255,255,.12); --edge-hi:rgba(255,255,255,.22);
+  --accent:#9ea2ff; --accent-2:#6d5cff; --accent-ink:#0b0a33; --accent-soft:rgba(130,134,255,.16);
+  --mint:#6ff0b6; --mint-soft:rgba(111,240,182,.13); --amber:#ffb86b; --amber-soft:rgba(255,184,107,.13);
+  --blur:blur(18px) saturate(150%);
+  --shadow:0 10px 30px rgba(0,0,0,.35); --shadow-hover:0 18px 50px rgba(0,0,0,.5),0 0 0 1px rgba(158,162,255,.25);
   --font-display:"Bricolage Grotesque","Segoe UI",system-ui,sans-serif;
   --font-body:"Source Sans 3","Segoe UI",system-ui,sans-serif;
-  color-scheme:light;
-}
-@media (prefers-color-scheme:dark){
-  :root:not([data-theme="light"]){
-    --paper:#101816; --surface:#17211e; --ink:#eaf0ed; --muted:#9db0aa;
-    --accent:#a3a8ff; --accent-ink:#0d0c3b; --signal:#f0a35e; --line:#2b3a36;
-    color-scheme:dark;
-  }
-}
-:root[data-theme="dark"]{
-  --paper:#101816; --surface:#17211e; --ink:#eaf0ed; --muted:#9db0aa;
-  --accent:#a3a8ff; --accent-ink:#0d0c3b; --signal:#f0a35e; --line:#2b3a36;
+  --radius:16px;
   color-scheme:dark;
 }
 *{box-sizing:border-box}
+html{scroll-behavior:smooth;scroll-padding-top:150px;background:var(--bg)}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}*,*::before,*::after{transition:none!important;animation:none!important}}
 html,body{margin:0}
-body{background:var(--paper);color:var(--ink);font:400 17px/1.55 var(--font-body)}
+body{color:var(--ink);font:400 17px/1.55 var(--font-body);-webkit-font-smoothing:antialiased;min-height:100vh;position:relative;overflow-x:hidden}
+/* Brilhos de fundo fixos (o que o vidro desfoca) */
+.aurora{position:fixed;inset:0;z-index:-1;pointer-events:none;overflow:hidden}
+.aurora i{position:absolute;border-radius:50%;filter:blur(90px);opacity:.55;animation:drift 22s ease-in-out infinite alternate}
+.aurora i:nth-child(1){width:560px;height:560px;left:-160px;top:-140px;background:#3a2fd6}
+.aurora i:nth-child(2){width:480px;height:480px;right:-140px;top:18%;background:#7a2fd0;animation-delay:-6s;opacity:.4}
+.aurora i:nth-child(3){width:520px;height:520px;left:22%;bottom:-260px;background:#0f8f8a;animation-delay:-12s;opacity:.32}
+.aurora::after{content:"";position:absolute;inset:0;background-image:radial-gradient(rgba(255,255,255,.5) 1px,transparent 1.4px);background-size:44px 44px;opacity:.07}
+@keyframes drift{to{transform:translate(60px,40px) scale(1.12)}}
 a{color:var(--accent)}
-a:focus-visible,button:focus-visible,input:focus-visible{outline:3px solid var(--signal);outline-offset:2px}
-.wrap{max-width:1040px;margin:0 auto;padding:0 20px}
-header.top{border-bottom:1px solid var(--line);background:var(--surface)}
-header.top .wrap{display:flex;flex-wrap:wrap;gap:12px 24px;align-items:center;justify-content:space-between;padding-top:14px;padding-bottom:14px}
-.brand{display:flex;align-items:center;gap:12px;font:700 20px/1 var(--font-display);letter-spacing:.02em;text-decoration:none;color:var(--ink)}
-.brand img{width:48px;height:48px;display:block}
-.brand span{color:var(--accent)}
-nav{display:flex;flex-wrap:wrap;gap:8px 18px;align-items:center}
-nav a{color:var(--ink);text-decoration:none;font-weight:600;font-size:15px}
-nav a:hover{text-decoration:underline}
-nav a.btn{color:var(--accent-ink)}
-.btn{display:inline-block;background:var(--accent);color:var(--accent-ink);padding:9px 16px;border-radius:6px;font-weight:600;font-size:15px;text-decoration:none}
-.btn:hover{filter:brightness(1.1);text-decoration:none}
-.intro{padding:40px 0 20px}
-h1{font:700 clamp(30px,5vw,46px)/1.08 var(--font-display);margin:0 0 12px;text-wrap:balance;max-width:20ch}
-.intro p{max-width:62ch;margin:0 0 20px;color:var(--muted);font-size:18px}
-.tools{display:flex;flex-wrap:wrap;gap:12px;align-items:center;margin-bottom:8px}
-.search{flex:1 1 280px}
-.search label{display:block;font-weight:600;font-size:14px;color:var(--muted);margin-bottom:6px}
-.search input{width:100%;padding:12px 14px;font:inherit;border:1.5px solid var(--line);border-radius:6px;background:var(--surface);color:var(--ink)}
-.chips{display:flex;flex-wrap:wrap;gap:8px}
-.chip{font:600 14px/1 var(--font-body);padding:10px 14px;border-radius:999px;border:1.5px solid var(--line);background:var(--surface);color:var(--ink);cursor:pointer}
-.chip[aria-pressed="true"]{background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}
-.legend{color:var(--muted);font-size:14px;margin:14px 0 0;max-width:80ch}
-.count{margin:18px 0 14px;font:600 15px var(--font-body);color:var(--muted)}
-.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(310px,1fr));gap:16px;padding-bottom:20px}
-.card{background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:18px;display:flex;flex-direction:column;gap:10px;border-left:5px solid var(--line)}
-.card.vaga{border-left-color:var(--accent)}
-.card h3{font:700 19px/1.2 var(--font-display);margin:0;text-wrap:balance}
-.meta{display:flex;flex-wrap:wrap;gap:6px}
-.tag{font:600 12.5px/1 var(--font-body);padding:5px 9px;border-radius:4px;background:var(--paper);border:1px solid var(--line);color:var(--muted);text-transform:uppercase;letter-spacing:.04em}
-.tag.ok{background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}
-.tag.eco{color:var(--accent);border-color:var(--accent)}
-.tag.warn{color:var(--signal);border-color:var(--signal)}
-.card p{margin:0;font-size:16px}
-dl{margin:0;display:grid;grid-template-columns:auto 1fr;gap:4px 12px;font-size:15px}
-dt{color:var(--muted)} dd{margin:0}
-.links{margin-top:auto;display:flex;flex-wrap:wrap;gap:4px 14px;padding-top:6px}
-.links a{font-size:15px;font-weight:600}
-.empty{grid-column:1/-1;padding:30px;border:1px dashed var(--line);border-radius:8px;color:var(--muted);text-align:center}
-section.block{padding:34px 0;border-top:1px solid var(--line)}
-h2{font:700 26px/1.15 var(--font-display);margin:0 0 14px}
-.steps{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:16px;padding:0;margin:0;list-style:none;counter-reset:s}
-.steps li{counter-increment:s;background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:16px}
-.steps li::before{content:counter(s);display:inline-block;font:700 14px var(--font-display);width:26px;height:26px;line-height:26px;text-align:center;border-radius:50%;background:var(--accent);color:var(--accent-ink);margin-bottom:8px}
-.official{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:12px}
-.official a{display:block;background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:14px 16px;text-decoration:none;color:var(--ink)}
-.official a strong{display:block;color:var(--accent);font-family:var(--font-display);font-size:18px}
-.official a:hover{border-color:var(--accent)}
-.official small{color:var(--muted)}
-footer{border-top:1px solid var(--line);padding:24px 0 40px;color:var(--muted);font-size:14px}
+a:focus-visible,button:focus-visible,input:focus-visible,summary:focus-visible{outline:2px solid var(--mint);outline-offset:3px;border-radius:8px}
+.wrap{max-width:1120px;margin:0 auto;padding:0 20px}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+.glass{background:var(--glass);border:1px solid var(--edge);backdrop-filter:var(--blur);-webkit-backdrop-filter:var(--blur)}
+
+/* Cabeçalho + hero */
+.top{display:flex;align-items:center;justify-content:space-between;gap:16px;margin-top:16px;padding:10px 12px 10px 14px;border-radius:18px}
+.brand{display:flex;align-items:center;gap:12px;font:800 20px/1 var(--font-display);text-decoration:none;color:var(--ink);letter-spacing:.01em}
+.brand img{width:42px;height:42px;display:block;border-radius:50%;box-shadow:0 0 0 2px rgba(255,255,255,.15),0 0 24px rgba(109,92,255,.55)}
+.brand em{font-style:normal;color:var(--accent);font-weight:600}
+nav{display:flex;align-items:center;gap:4px}
+nav a{color:var(--ink);text-decoration:none;font-weight:600;font-size:15px;padding:9px 13px;border-radius:10px;transition:background .15s}
+nav a:hover{background:var(--glass-2)}
+nav a.pill{background:linear-gradient(135deg,var(--accent),var(--accent-2));color:#fff;margin-left:6px}
+nav a.pill:hover{filter:brightness(1.1)}
+.hero-body{display:grid;grid-template-columns:1.3fr 1fr;gap:44px;align-items:center;padding-top:64px;padding-bottom:72px}
+.eyebrow{display:inline-flex;align-items:center;gap:9px;font:700 12.5px/1 var(--font-body);letter-spacing:.09em;text-transform:uppercase;color:var(--muted);padding:9px 13px;border-radius:999px;margin-bottom:20px}
+.eyebrow::before{content:"";width:7px;height:7px;border-radius:50%;background:var(--mint);box-shadow:0 0 0 4px rgba(111,240,182,.18),0 0 12px var(--mint)}
+h1{font:800 clamp(36px,5.6vw,62px)/1.02 var(--font-display);margin:0 0 20px;text-wrap:balance;letter-spacing:-.025em}
+h1 span{background:linear-gradient(95deg,#b9bcff 0%,#e3c4ff 45%,#8ef3c9 100%);-webkit-background-clip:text;background-clip:text;color:transparent}
+.lead{max-width:54ch;margin:0 0 30px;color:var(--muted);font-size:19px}
+.cta{display:flex;flex-wrap:wrap;gap:12px}
+.btn{display:inline-flex;align-items:center;gap:8px;padding:13px 22px;border-radius:12px;font-weight:700;font-size:16px;text-decoration:none;transition:transform .15s,box-shadow .15s,background .15s;color:var(--ink)}
+.btn:hover{transform:translateY(-2px)}
+.btn.primary{background:linear-gradient(135deg,var(--accent),var(--accent-2));color:#fff;box-shadow:0 8px 30px rgba(109,92,255,.45)}
+.btn.primary:hover{box-shadow:0 12px 40px rgba(109,92,255,.6)}
+.btn.ghost:hover{background:var(--glass-2)}
+.stats{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.stat{appearance:none;font:inherit;text-align:left;cursor:pointer;color:inherit;border-radius:var(--radius);padding:20px;transition:background .2s,transform .2s,border-color .2s,box-shadow .2s;position:relative;overflow:hidden}
+.stat::before{content:"";position:absolute;inset:0;background:linear-gradient(135deg,rgba(255,255,255,.12),transparent 45%);pointer-events:none}
+.stat:hover{background:var(--glass-2);border-color:var(--edge-hi);transform:translateY(-3px);box-shadow:var(--shadow)}
+.stat b{display:block;font:800 42px/1 var(--font-display);margin-bottom:8px;letter-spacing:-.02em}
+.stat span{color:var(--muted);font-size:15px;line-height:1.3;display:block}
+.stat.hot b{color:var(--mint);text-shadow:0 0 24px rgba(111,240,182,.45)}
+
+/* Barra de busca e filtros */
+.toolbar{position:sticky;top:0;z-index:5;transition:background .25s,box-shadow .25s,border-color .25s;border-bottom:1px solid transparent}
+.toolbar.stuck{background:var(--glass-strong);backdrop-filter:var(--blur);-webkit-backdrop-filter:var(--blur);border-bottom-color:var(--edge);box-shadow:0 10px 30px rgba(0,0,0,.35)}
+.toolbar .wrap{padding-top:14px;padding-bottom:14px;display:flex;flex-direction:column;gap:12px}
+.search{position:relative}
+.search svg{position:absolute;z-index:1;left:18px;top:50%;transform:translateY(-50%);width:20px;height:20px;color:var(--muted);pointer-events:none}
+.search input{width:100%;padding:17px 18px 17px 50px;font:inherit;font-size:17px;border-radius:var(--radius);color:var(--ink);background:var(--glass);border:1px solid var(--edge);backdrop-filter:var(--blur);-webkit-backdrop-filter:var(--blur);transition:border-color .15s,box-shadow .15s}
+.search input::placeholder{color:var(--faint)}
+.search input:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 4px var(--accent-soft),0 0 40px rgba(109,92,255,.25)}
+.chips{display:flex;gap:8px;overflow-x:auto;scrollbar-width:none;padding-bottom:2px;margin:0 -20px;padding-left:20px;padding-right:20px}
+.chips::-webkit-scrollbar{display:none}
+.chip{flex:none;display:inline-flex;align-items:center;gap:8px;font:600 14px/1 var(--font-body);padding:9px 12px 9px 15px;border-radius:999px;color:var(--ink);cursor:pointer;background:var(--glass);border:1px solid var(--edge);backdrop-filter:var(--blur);-webkit-backdrop-filter:var(--blur);transition:border-color .15s,background .15s,box-shadow .15s}
+.chip:hover{border-color:var(--edge-hi);background:var(--glass-2)}
+.chip i{font-style:normal;font-size:12px;min-width:22px;text-align:center;padding:3px 7px;border-radius:999px;background:rgba(255,255,255,.08);color:var(--muted)}
+.chip[aria-pressed="true"]{background:linear-gradient(135deg,var(--accent),var(--accent-2));color:#fff;border-color:transparent;box-shadow:0 6px 22px rgba(109,92,255,.4)}
+.chip[aria-pressed="true"] i{background:rgba(255,255,255,.22);color:#fff}
+
+/* Lista */
+.listhead{display:flex;flex-wrap:wrap;align-items:baseline;justify-content:space-between;gap:8px 16px;margin:18px 0 16px}
+.count{font:700 15px var(--font-body);color:var(--muted);margin:0}
+details.legend{font-size:15px;color:var(--muted)}
+details.legend summary{cursor:pointer;font-weight:600;color:var(--accent);list-style:none}
+details.legend summary::-webkit-details-marker{display:none}
+details.legend summary::after{content:" +"}
+details.legend[open] summary::after{content:" −"}
+details.legend p{margin:10px 0 0;max-width:72ch;border-radius:12px;padding:12px 14px}
+details.legend b{color:var(--ink)}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:18px;padding-bottom:40px}
+.card{position:relative;border-radius:var(--radius);padding:22px;display:flex;flex-direction:column;gap:12px;overflow:hidden;transition:transform .2s,box-shadow .2s,border-color .2s,background .2s;animation:in .35s ease both}
+.card::before{content:"";position:absolute;inset:0;border-radius:inherit;background:linear-gradient(140deg,rgba(255,255,255,.1),transparent 40%);pointer-events:none}
+.card::after{content:"";position:absolute;width:220px;height:220px;border-radius:50%;left:var(--mx,-999px);top:var(--my,-999px);transform:translate(-50%,-50%);background:radial-gradient(circle,rgba(158,162,255,.22),transparent 65%);pointer-events:none;opacity:0;transition:opacity .25s}
+.card:hover::after{opacity:1}
+@keyframes in{from{opacity:0;transform:translateY(8px)}}
+.card:hover{transform:translateY(-4px);box-shadow:var(--shadow-hover);border-color:var(--edge-hi);background:var(--glass-2)}
+.card.vaga{background:linear-gradient(160deg,rgba(130,134,255,.2),rgba(111,240,182,.06) 70%);border-color:rgba(158,162,255,.4);box-shadow:0 0 0 1px rgba(158,162,255,.08),0 12px 40px rgba(109,92,255,.18)}
+.card.vaga .flag{position:absolute;top:16px;right:16px;background:var(--mint-soft);color:var(--mint);border:1px solid rgba(111,240,182,.35);font:700 11px/1 var(--font-body);letter-spacing:.07em;text-transform:uppercase;padding:6px 9px;border-radius:999px}
+.kicker{display:flex;flex-wrap:wrap;align-items:center;gap:6px 10px;font:600 13px/1.2 var(--font-body);color:var(--muted)}
+.dept{font:700 11.5px/1 var(--font-body);letter-spacing:.06em;padding:5px 8px;border-radius:6px;background:rgba(255,255,255,.08);color:var(--muted)}
+.dept.eco{background:var(--accent-soft);color:var(--accent);box-shadow:inset 0 0 0 1px rgba(158,162,255,.35)}
+.card h3{font:700 20px/1.22 var(--font-display);margin:0;text-wrap:balance;letter-spacing:-.01em}
+.card.vaga .kicker{padding-right:120px}
+.status{align-self:flex-start;display:inline-flex;align-items:center;gap:7px;font:600 13.5px/1 var(--font-body);padding:6px 10px;border-radius:999px;background:var(--mint-soft);color:var(--mint)}
+.status::before{content:"";width:7px;height:7px;border-radius:50%;background:currentColor;box-shadow:0 0 8px currentColor}
+.status.warn{background:var(--amber-soft);color:var(--amber)}
+.status.old{background:rgba(255,255,255,.07);color:var(--muted)}
+.status.old::before{box-shadow:none}
+.card p{margin:0;font-size:16px;color:#d6d8f2}
+dl{margin:0;display:grid;grid-template-columns:auto 1fr;gap:6px 14px;font-size:15px;padding:12px 14px;background:rgba(0,0,0,.22);border:1px solid rgba(255,255,255,.06);border-radius:12px}
+dt{color:var(--muted)} dd{margin:0;font-weight:600}
+.links{margin-top:auto;display:flex;flex-wrap:wrap;gap:8px;padding-top:4px;position:relative;z-index:1}
+.links a{display:inline-flex;align-items:center;gap:6px;font-size:14.5px;font-weight:700;text-decoration:none;padding:8px 12px;border-radius:10px;border:1px solid var(--edge);color:var(--accent);background:rgba(255,255,255,.04);transition:background .15s,border-color .15s,color .15s}
+.links a:hover{border-color:var(--accent);background:var(--accent-soft);color:#fff}
+.empty{grid-column:1/-1;padding:44px 20px;border:1.5px dashed var(--edge);border-radius:var(--radius);color:var(--muted);text-align:center}
+.empty button{margin-top:10px;font:700 15px var(--font-body);color:var(--accent);background:none;border:0;cursor:pointer;text-decoration:underline}
+
+/* Seções */
+section.block{padding:40px 0 56px}
+.panel{border-radius:24px;padding:36px}
+.sec-head{margin-bottom:24px}
+.sec-head small{display:block;font:700 12.5px/1 var(--font-body);letter-spacing:.09em;text-transform:uppercase;color:var(--mint);margin-bottom:10px}
+h2{font:800 clamp(26px,3.4vw,34px)/1.1 var(--font-display);margin:0;letter-spacing:-.015em}
+.steps{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:16px;padding:0;margin:0;list-style:none;counter-reset:s}
+.steps li{counter-increment:s;background:rgba(0,0,0,.2);border:1px solid rgba(255,255,255,.07);border-radius:var(--radius);padding:22px}
+.steps li::before{content:counter(s);display:grid;place-items:center;font:800 18px var(--font-display);width:42px;height:42px;border-radius:12px;background:linear-gradient(135deg,var(--accent),var(--accent-2));color:#fff;margin-bottom:14px;box-shadow:0 6px 20px rgba(109,92,255,.45)}
+.steps strong{display:block;font:700 19px/1.2 var(--font-display);margin-bottom:6px}
+.steps p{margin:0;color:var(--muted)}
+.callout{margin-top:18px;display:flex;gap:16px;align-items:center;border-radius:var(--radius);padding:16px 20px;font-size:16px;background:var(--mint-soft);border:1px solid rgba(111,240,182,.25)}
+.callout b{font-family:var(--font-display);font-size:32px;line-height:1;color:var(--mint)}
+.official{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:14px}
+.official a{display:flex;flex-direction:column;gap:4px;border-radius:var(--radius);padding:20px;text-decoration:none;color:var(--ink);transition:transform .2s,box-shadow .2s,border-color .2s,background .2s}
+.official a:hover{transform:translateY(-3px);box-shadow:var(--shadow-hover);border-color:var(--edge-hi);background:var(--glass-2)}
+.official strong{display:flex;justify-content:space-between;gap:10px;color:var(--ink);font:700 18px/1.2 var(--font-display)}
+.official strong span{color:var(--accent)}
+.official small{color:var(--muted);font-size:14.5px}
+footer{margin:0 auto 28px}
+footer .inner{display:flex;gap:20px;align-items:flex-start;border-radius:20px;padding:24px;color:var(--muted);font-size:14.5px}
+footer img{width:50px;height:50px;border-radius:50%;flex:none;box-shadow:0 0 24px rgba(109,92,255,.5)}
+footer strong{color:var(--ink);font-family:var(--font-display);font-size:17px;display:block;margin-bottom:4px}
+footer p{margin:0;max-width:80ch}
+.totop{position:fixed;right:18px;bottom:18px;z-index:6;width:48px;height:48px;border-radius:50%;color:var(--ink);cursor:pointer;display:grid;place-items:center;opacity:0;pointer-events:none;transform:translateY(10px);transition:opacity .2s,transform .2s,background .2s;box-shadow:var(--shadow)}
+.totop:hover{background:var(--glass-2)}
+.totop.show{opacity:1;pointer-events:auto;transform:none}
+.totop svg{width:20px;height:20px}
+
+@supports not ((backdrop-filter:blur(1px)) or (-webkit-backdrop-filter:blur(1px))){
+  .glass,.chip,.search input{background:#15173a}
+  .toolbar.stuck{background:#0d0f2a}
+}
+@media (max-width:860px){
+  .hero-body{grid-template-columns:1fr;gap:30px;padding-top:40px;padding-bottom:48px}
+  nav a.hide-sm{display:none}
+}
+@media (max-width:560px){
+  .wrap{padding-left:16px;padding-right:16px}
+  .chips{margin:0 -16px;padding-left:16px;padding-right:16px}
+  .brand{font-size:18px}.brand img{width:36px;height:36px}
+  nav a:not(.pill){display:none}
+  .lead{font-size:17px}
+  .stats{gap:10px}.stat{padding:16px}.stat b{font-size:34px}
+  .grid{grid-template-columns:1fr}
+  .panel{padding:22px 18px;border-radius:20px}
+  .card.vaga .kicker{padding-right:0}
+  .card.vaga .flag{position:static;align-self:flex-start;order:-1}
+  footer .inner{flex-direction:column}
+  html{scroll-padding-top:130px}
+  .aurora i{filter:blur(70px)}
+}
 </style>
 </head>
 <body>
-<header class="top">
-  <div class="wrap">
-    <a class="brand" href="#inicio"><img src="logo-caeco.png" alt="Logo do CAECO UFC" width="48" height="48"><span>CAECO<b style="color:var(--accent)">.</b>extensão</span></a>
+<div class="aurora" aria-hidden="true"><i></i><i></i><i></i></div>
+<div id="inicio">
+  <div class="wrap"><header class="top glass">
+    <a class="brand" href="#inicio"><img src="logo-caeco.png" alt="" width="42" height="42"><span>CAECO<em>.extensão</em></span></a>
     <nav aria-label="Principal">
-      <a href="#projetos">Projetos</a>
-      <a href="#como-participar">Como participar</a>
-      <a href="#oficiais">Links oficiais</a>
-      <a class="btn" href="https://www.ufc.br" target="_blank" rel="noopener">Página oficial da UFC</a>
+      <a class="hide-sm" href="#projetos">Projetos</a>
+      <a class="hide-sm" href="#como-participar">Como participar</a>
+      <a class="hide-sm" href="#oficiais">Links oficiais</a>
+      <a class="pill" href="https://www.ufc.br" target="_blank" rel="noopener">UFC ↗</a>
     </nav>
-  </div>
-</header>
-
-<main id="inicio">
-  <div class="wrap">
-    <div class="intro">
-      <h1>Projetos de extensão para quem estuda Economia na UFC</h1>
-      <p>Todas as ações de extensão listadas pela FEAAC, os editais com vaga para Economia e o link da fonte oficial de cada uma. Comece pelo filtro "Departamentos de Economia" se quiser ver só o que vem da área.</p>
-      <div class="tools">
-        <div class="search">
-          <label for="q">Buscar</label>
-          <input id="q" type="search" placeholder="Nome, tema ou sigla do departamento" autocomplete="off">
-        </div>
+  </header></div>
+  <div class="wrap hero-body">
+    <div>
+      <span class="eyebrow glass">Centro Acadêmico de Economia · UFC</span>
+      <h1>Extensão para quem estuda <span>Economia na UFC</span></h1>
+      <p class="lead">Todas as ações de extensão listadas pela FEAAC, os editais com vaga para Economia e o link da fonte oficial de cada uma, num só lugar.</p>
+      <div class="cta">
+        <a class="btn primary" href="#projetos" data-go="vaga">Ver editais com vaga →</a>
+        <a class="btn ghost glass" href="#como-participar">Como participar</a>
       </div>
-      <div class="chips" role="group" aria-label="Filtrar projetos">
-        <button class="chip" data-f="todos" aria-pressed="true">Todos</button>
-        <button class="chip" data-f="vaga" aria-pressed="false">Edital com vaga para Economia</button>
-        <button class="chip" data-f="eco" aria-pressed="false">Departamentos de Economia</button>
-        <button class="chip" data-f="ativo" aria-pressed="false">Na lista de 2025</button>
-        <button class="chip" data-f="evento" aria-pressed="false">Seminários e eventos</button>
-        <button class="chip" data-f="hist" aria-pressed="false">Registrados antes de 2025</button>
-      </div>
-      <p class="legend">Siglas usadas pela FEAAC: DTE (Teoria Econômica), DEA (Economia Aplicada), DA (Administração), DC (Contabilidade). "Registrados antes de 2025" são ações que aparecem nas listas de 2019 a 2024 e não estão na lista de 2025; pergunte ao CAECO se seguem ativas.</p>
     </div>
-
-    <section id="projetos" aria-labelledby="h-proj" style="padding-bottom:10px">
-      <h2 id="h-proj" class="count"><span id="n"></span></h2>
-      <div class="grid" id="grid"></div>
-    </section>
-
-    <section class="block" id="como-participar">
-      <h2>Como participar</h2>
-      <ol class="steps">
-        <li><strong>Entenda a regra.</strong><br>Quem faz graduação na UFC precisa cumprir no mínimo 10% da carga horária do curso em extensão. Para valer no histórico, você tem que fazer parte da equipe da ação.</li>
-        <li><strong>Acompanhe os editais.</strong><br>A FEAAC e a Pró-Reitoria de Extensão (PREX) divulgam os editais de bolsas e de seleção de Agentes UFC. Os links de cada edital estão nos cartões acima.</li>
-        <li><strong>Inscreva-se e confirme.</strong><br>Leia vagas, carga horária mensal e requisitos no próprio edital. Para projetos sem edital, procure a coordenação pelo Instagram ou pela FEAAC.</li>
-      </ol>
-    </section>
-
-    <section class="block" id="oficiais">
-      <h2>Links oficiais</h2>
-      <div class="official">
-        <a href="https://www.ufc.br" target="_blank" rel="noopener"><strong>Universidade Federal do Ceará</strong><small>Página oficial da UFC</small></a>
-        <a href="https://prex.ufc.br" target="_blank" rel="noopener"><strong>Pró-Reitoria de Extensão</strong><small>Editais, bolsas e certificados</small></a>
-        <a href="https://feaac.ufc.br" target="_blank" rel="noopener"><strong>FEAAC</strong><small>Faculdade de Economia, Administração, Atuária e Contabilidade</small></a>
-        <a href="https://feaac.ufc.br/pt/projeto-de-extensao/" target="_blank" rel="noopener"><strong>Projetos de extensão da FEAAC</strong><small>Lista oficial, de onde saiu este site</small></a>
-      </div>
-    </section>
+    <div class="stats" aria-label="Resumo">
+      <button class="stat glass hot" type="button" data-go="vaga"><b id="s-vaga">0</b><span>editais com vaga para Economia</span></button>
+      <button class="stat glass" type="button" data-go="eco"><b id="s-eco">0</b><span>ações dos departamentos de Economia</span></button>
+      <button class="stat glass" type="button" data-go="ativo"><b id="s-ativo">0</b><span>ações na lista de 2025</span></button>
+      <button class="stat glass" type="button" data-go="todos"><b id="s-todos">0</b><span>ações registradas no total</span></button>
+    </div>
   </div>
+</div>
+
+<div class="toolbar" id="toolbar">
+  <div class="wrap">
+    <div class="search">
+      <label class="sr" for="q">Buscar projetos</label>
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+      <input id="q" type="search" placeholder="Buscar por nome, tema ou sigla" autocomplete="off">
+    </div>
+    <div class="chips" role="group" aria-label="Filtrar projetos">
+      <button class="chip" data-f="todos" aria-pressed="true">Todos <i></i></button>
+      <button class="chip" data-f="vaga" aria-pressed="false">Edital com vaga para Economia <i></i></button>
+      <button class="chip" data-f="eco" aria-pressed="false">Departamentos de Economia <i></i></button>
+      <button class="chip" data-f="ativo" aria-pressed="false">Na lista de 2025 <i></i></button>
+      <button class="chip" data-f="evento" aria-pressed="false">Seminários e eventos <i></i></button>
+      <button class="chip" data-f="hist" aria-pressed="false">Registrados antes de 2025 <i></i></button>
+    </div>
+  </div>
+</div>
+
+<main>
+  <section id="projetos" class="wrap" aria-labelledby="n">
+    <div class="listhead">
+      <h2 class="count" id="n" aria-live="polite"></h2>
+      <details class="legend">
+        <summary>O que significam as siglas?</summary>
+        <p class="glass">Siglas usadas pela FEAAC: <b>DTE</b> (Teoria Econômica), <b>DEA</b> (Economia Aplicada), <b>DA</b> (Administração), <b>DC</b> (Contabilidade). "Registrados antes de 2025" são ações que aparecem nas listas de 2019 a 2024 e não estão na lista de 2025; pergunte ao CAECO se seguem ativas.</p>
+      </details>
+    </div>
+    <div class="grid" id="grid"></div>
+  </section>
+
+  <section class="block" id="como-participar">
+    <div class="wrap"><div class="panel glass">
+      <div class="sec-head"><small>Passo a passo</small><h2>Como participar</h2></div>
+      <ol class="steps">
+        <li><strong>Entenda a regra</strong><p>Quem faz graduação na UFC precisa cumprir no mínimo 10% da carga horária do curso em extensão. Para valer no histórico, você tem que fazer parte da equipe da ação.</p></li>
+        <li><strong>Acompanhe os editais</strong><p>A FEAAC e a Pró-Reitoria de Extensão (PREX) divulgam os editais de bolsas e de seleção de Agentes UFC. Os links de cada edital estão nos cartões acima.</p></li>
+        <li><strong>Inscreva-se e confirme</strong><p>Leia vagas, carga horária mensal e requisitos no próprio edital. Para projetos sem edital, procure a coordenação pelo Instagram ou pela FEAAC.</p></li>
+      </ol>
+      <div class="callout"><b>10%</b><span>da carga horária do curso precisa ser cumprida em extensão. Comece cedo para não acumular no fim da graduação.</span></div>
+    </div></div>
+  </section>
+
+  <section class="block" id="oficiais">
+    <div class="wrap">
+      <div class="sec-head"><small>Fontes</small><h2>Links oficiais</h2></div>
+      <div class="official">
+        <a class="glass" href="https://www.ufc.br" target="_blank" rel="noopener"><strong>Universidade Federal do Ceará <span aria-hidden="true">↗</span></strong><small>Página oficial da UFC</small></a>
+        <a class="glass" href="https://prex.ufc.br" target="_blank" rel="noopener"><strong>Pró-Reitoria de Extensão <span aria-hidden="true">↗</span></strong><small>Editais, bolsas e certificados</small></a>
+        <a class="glass" href="https://feaac.ufc.br" target="_blank" rel="noopener"><strong>FEAAC <span aria-hidden="true">↗</span></strong><small>Faculdade de Economia, Administração, Atuária e Contabilidade</small></a>
+        <a class="glass" href="https://feaac.ufc.br/pt/projeto-de-extensao/" target="_blank" rel="noopener"><strong>Projetos de extensão da FEAAC <span aria-hidden="true">↗</span></strong><small>Lista oficial, de onde saiu este site</small></a>
+      </div>
+    </div>
+  </section>
 </main>
 
-<footer>
-  <div class="wrap">
-    Site do Centro Acadêmico de Economia (CAECO), UFC. Lista de projetos conferida na página de extensão da FEAAC em 09/11/2026; editais vêm das páginas da PREX e da FEAAC. Vagas e prazos mudam a cada edital, então confirme sempre no documento oficial. Este site não é um canal oficial da UFC.
+<footer class="wrap">
+  <div class="inner glass">
+    <img src="logo-caeco.png" alt="" width="52" height="52">
+    <div>
+      <strong>CAECO · Centro Acadêmico de Economia da UFC</strong>
+      <p>Lista de projetos conferida na página de extensão da FEAAC em 09/11/2026; editais vêm das páginas da PREX e da FEAAC. Vagas e prazos mudam a cada edital, então confirme sempre no documento oficial. Este site não é um canal oficial da UFC.</p>
+    </div>
   </div>
 </footer>
+
+<button class="totop glass" id="totop" type="button" aria-label="Voltar ao topo"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 19V5M5 12l7-7 7 7"/></svg></button>
 
 <script>
 /* Para atualizar o site, edite só a lista PROJETOS.
@@ -273,30 +401,42 @@ const PROJETOS=[
 ];
 
 const grid=document.getElementById('grid'), q=document.getElementById('q'), n=document.getElementById('n');
+const chips=[...document.querySelectorAll('.chip')];
 let filtro='todos';
+const conta=f=>f==='todos'?PROJETOS.length:PROJETOS.filter(p=>p.cats.includes(f)).length;
+const ARROW='<svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17 17 7M8 7h9v9"/></svg>';
 
 function el(tag, cls, text){const e=document.createElement(tag); if(cls) e.className=cls; if(text!==undefined) e.textContent=text; return e;}
 
-function card(p){
-  const c=el('article','card'+(p.cats.includes('vaga')?' vaga':''));
+function card(p,i){
+  const vaga=p.cats.includes('vaga');
+  const c=el('article','card glass'+(vaga?' vaga':''));
+  c.style.animationDelay=Math.min(i,12)*25+'ms';
+  if(vaga) c.appendChild(el('span','flag','Vaga p/ Economia'));
+  const k=el('div','kicker');
+  if(p.depto) k.appendChild(el('span','dept'+(p.cats.includes('eco')?' eco':''),p.depto));
+  k.appendChild(el('span',null,p.tipo));
+  c.appendChild(k);
   c.appendChild(el('h3',null,p.nome));
-  const m=el('div','meta');
-  m.appendChild(el('span','tag'+(p.cats.includes('vaga')?' ok':''),p.tipo));
-  if(p.depto) m.appendChild(el('span','tag'+(p.cats.includes('eco')?' eco':''),p.depto));
-  m.appendChild(el('span','tag'+(/Confer|Última/.test(p.status)?' warn':''),p.status));
-  c.appendChild(m);
+  c.appendChild(el('span','status'+(/Confer/.test(p.status)?' warn':/Última|Edição|Edições/.test(p.status)&&p.cats.includes('hist')?' old':''),p.status));
   if(p.desc) c.appendChild(el('p',null,p.desc));
   if(p.info.length){
     const dl=el('dl');
-    p.info.forEach(([k,v])=>{dl.appendChild(el('dt',null,k)); dl.appendChild(el('dd',null,v));});
+    p.info.forEach(([a,b])=>{dl.appendChild(el('dt',null,a)); dl.appendChild(el('dd',null,b));});
     c.appendChild(dl);
   }
   if(p.links.length){
     const l=el('div','links');
-    p.links.forEach(([t,u])=>{const a=el('a',null,t+' ↗'); a.href=u; a.target='_blank'; a.rel='noopener'; l.appendChild(a);});
+    p.links.forEach(([t,u])=>{const a=el('a',null,t); a.insertAdjacentHTML('beforeend',ARROW); a.href=u; a.target='_blank'; a.rel='noopener'; l.appendChild(a);});
     c.appendChild(l);
   }
   return c;
+}
+
+function setFiltro(f){
+  filtro=f;
+  chips.forEach(x=>x.setAttribute('aria-pressed',String(x.dataset.f===f)));
+  render();
 }
 
 function render(){
@@ -308,17 +448,37 @@ function render(){
     return txt.includes(t);
   });
   grid.replaceChildren();
-  if(!lista.length){grid.appendChild(el('div','empty','Nenhuma ação encontrada. Tente outra palavra ou volte para "Todos".'));}
-  lista.forEach(p=>grid.appendChild(card(p)));
+  if(!lista.length){
+    const e=el('div','empty','Nenhuma ação encontrada. Tente outra palavra ou veja todas as ações.');
+    const b=el('button',null,'Limpar busca e filtros'); b.type='button';
+    b.onclick=()=>{q.value=''; setFiltro('todos'); q.focus();};
+    e.appendChild(el('br')); e.appendChild(b); grid.appendChild(e);
+  }
+  lista.forEach((p,i)=>grid.appendChild(card(p,i)));
   n.textContent=lista.length+(lista.length===1?' ação encontrada':' ações encontradas');
 }
 
-document.querySelectorAll('.chip').forEach(b=>b.addEventListener('click',()=>{
-  filtro=b.dataset.f;
-  document.querySelectorAll('.chip').forEach(x=>x.setAttribute('aria-pressed',String(x===b)));
-  render();
+chips.forEach(b=>{b.querySelector('i').textContent=conta(b.dataset.f); b.addEventListener('click',()=>setFiltro(b.dataset.f));});
+['vaga','eco','ativo','todos'].forEach(f=>document.getElementById('s-'+f).textContent=conta(f));
+document.querySelectorAll('[data-go]').forEach(b=>b.addEventListener('click',e=>{
+  setFiltro(b.dataset.go);
+  if(b.tagName==='BUTTON') document.getElementById('projetos').scrollIntoView();
 }));
 q.addEventListener('input',render);
+
+/* Brilho que acompanha o mouse nos cartões */
+grid.addEventListener('pointermove',e=>{
+  const c=e.target.closest('.card'); if(!c) return;
+  const r=c.getBoundingClientRect();
+  c.style.setProperty('--mx',(e.clientX-r.left)+'px'); c.style.setProperty('--my',(e.clientY-r.top)+'px');
+});
+
+/* Barra fixa ganha vidro ao grudar no topo; botão de voltar ao topo */
+const bar=document.getElementById('toolbar'), toTop=document.getElementById('totop');
+const onScroll=()=>{bar.classList.toggle('stuck',bar.getBoundingClientRect().top<=0); toTop.classList.toggle('show',scrollY>700);};
+addEventListener('scroll',onScroll,{passive:true}); onScroll();
+toTop.addEventListener('click',()=>scrollTo({top:0}));
+
 render();
 </script>
 </body>
