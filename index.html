@@ -102,7 +102,9 @@ details.legend summary::after{content:" +"}
 details.legend[open] summary::after{content:" −"}
 details.legend p{margin:10px 0 0;max-width:72ch;border-radius:12px;padding:12px 14px}
 details.legend b{color:var(--ink)}
-.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:18px;padding-bottom:40px;align-items:start}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));column-gap:18px;row-gap:0;grid-auto-rows:2px;padding-bottom:40px;align-items:start}
+.grid>*{--gap:18px}
+.card{will-change:translate}
 .card{position:relative;border-radius:var(--radius);padding:22px;display:flex;flex-direction:column;gap:12px;overflow:hidden;transition:transform .2s,box-shadow .2s,border-color .2s,background .2s;animation:in .35s ease both}
 .card::before{content:"";position:absolute;inset:0;border-radius:inherit;background:linear-gradient(140deg,rgba(255,255,255,.04),transparent 40%);pointer-events:none}
 .card::after{content:"";position:absolute;width:220px;height:220px;border-radius:50%;left:var(--mx,-999px);top:var(--my,-999px);transform:translate(-50%,-50%);background:radial-gradient(circle,rgba(158,162,255,.07),transparent 65%);pointer-events:none;opacity:0;transition:opacity .25s}
@@ -181,7 +183,7 @@ footer p{margin:0;max-width:80ch}
   nav a:not(.pill){display:none}
   .lead{font-size:17px}
   .stats{gap:10px}.stat{padding:16px}.stat b{font-size:34px}
-  .grid{grid-template-columns:1fr;gap:10px;padding-bottom:28px}
+  .grid{grid-template-columns:1fr;column-gap:10px;padding-bottom:28px}
   /* Topo compacto */
   .top{margin-top:10px;padding:8px 8px 8px 10px}
   .hero-body{padding-top:26px;padding-bottom:22px;gap:20px}
@@ -487,7 +489,7 @@ function card(p,i){
     p.info.forEach(([a,b])=>{dl.appendChild(el('dt',null,a)); dl.appendChild(el('dd',null,b));});
     body.appendChild(dl);
   }
-  if(!p.desc && !p.info.length){
+  if(!p.desc && !p.info.length && !p.links.length){
     body.appendChild(el('p','nota','A FEAAC divulga só o nome desta ação. Para saber como participar, procure a coordenação ou fale com o CAECO.'));
   }
   const links=p.links.length?p.links:[
@@ -519,6 +521,13 @@ function setFiltro(f){
   render();
 }
 
+/* Mural (masonry): cada cartão ocupa só a altura do próprio conteúdo, sem buracos entre eles */
+const RO=new ResizeObserver(es=>es.forEach(e=>encaixa(e.target)));
+function encaixa(c){
+  const gap=parseFloat(getComputedStyle(grid).columnGap)||18;
+  c.style.gridRowEnd='span '+Math.ceil((c.offsetHeight+gap)/2);
+}
+
 function render(){
   const t=q.value.trim().toLowerCase();
   const lista=PROJETOS.filter(p=>{
@@ -527,6 +536,7 @@ function render(){
     const txt=(p.nome+' '+p.desc+' '+p.tipo+' '+p.depto+' '+p.info.map(i=>i.join(' ')).join(' ')).toLowerCase();
     return txt.includes(t);
   });
+  RO.disconnect();
   grid.replaceChildren();
   if(!lista.length){
     const e=el('div','empty','Nenhuma ação encontrada. Tente outra palavra ou veja todas as ações.');
@@ -542,6 +552,7 @@ function render(){
     b.onclick=()=>{const de=limite; limite+=PASSO; render(); const prox=grid.children[de]; if(prox){prox.setAttribute('tabindex','-1'); prox.focus({preventScroll:true});}};
     w.appendChild(b); grid.appendChild(w);
   }
+  [...grid.children].forEach(c=>RO.observe(c));
   n.textContent=lista.length+(lista.length===1?' ação encontrada':' ações encontradas');
 }
 
@@ -565,6 +576,26 @@ const bar=document.getElementById('toolbar'), toTop=document.getElementById('tot
 const onScroll=()=>{bar.classList.toggle('stuck',bar.getBoundingClientRect().top<=0); toTop.classList.toggle('show',scrollY>700);};
 addEventListener('scroll',onScroll,{passive:true}); onScroll();
 toTop.addEventListener('click',()=>scrollTo({top:0}));
+
+/* Efeito "slime": ao rolar, os cartões se afastam do centro da tela proporcionalmente à velocidade
+   e voltam com uma mola (leve balanço) quando a rolagem para. */
+if(!matchMedia('(prefers-reduced-motion: reduce)').matches){
+  let ultimoY=scrollY, desloc=0, veloc=0, rodando=false;
+  const passo=()=>{
+    const y=scrollY, v=Math.max(-50,Math.min(50,y-ultimoY)); ultimoY=y;
+    veloc=(veloc+(v-desloc)*0.14)*0.74; desloc+=veloc;
+    const parado=Math.abs(desloc)<0.15 && Math.abs(veloc)<0.15 && v===0;
+    const gTop=grid.getBoundingClientRect().top, meio=innerHeight/2;
+    for(const c of grid.children){
+      const topo=gTop+c.offsetTop;
+      if(topo>innerHeight+200 || topo+c.offsetHeight<-200){ if(c.style.translate) c.style.translate=''; continue; }
+      const d=(topo+c.offsetHeight/2-meio)/innerHeight;
+      c.style.translate=parado?'':'0 '+(desloc*d*1.5).toFixed(1)+'px';
+    }
+    if(parado){desloc=veloc=0; rodando=false;} else requestAnimationFrame(passo);
+  };
+  addEventListener('scroll',()=>{ if(!rodando){rodando=true; requestAnimationFrame(passo);} },{passive:true});
+}
 
 render();
 </script>
