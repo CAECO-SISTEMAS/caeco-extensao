@@ -2,7 +2,7 @@
 
 Site do Centro Acadêmico de Economia (CAECO) da UFC com os projetos de extensão da FEAAC, os editais com vaga para Economia e os links oficiais da UFC.
 
-Site estático: `index.html` + `logo-caeco.png`. Sem build.
+Site estático: `index.html` + `logo-caeco.png`. Sem build. Tema escuro com efeito de vidro (glassmorphism); as cores ficam nas variáveis CSS em `:root`.
 
 ## Como atualizar a lista
 
