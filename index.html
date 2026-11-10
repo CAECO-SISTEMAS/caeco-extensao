@@ -6,6 +6,19 @@
 <title>CAECO Extensão</title>
 <meta name="description" content="Projetos de extensão da FEAAC e editais com vaga para estudantes de Economia da UFC, reunidos pelo CAECO.">
 <meta name="theme-color" content="#070818">
+<link rel="canonical" href="https://caeco-extensao.vercel.app/">
+<meta property="og:type" content="website">
+<meta property="og:locale" content="pt_BR">
+<meta property="og:site_name" content="CAECO.extensão">
+<meta property="og:title" content="CAECO.extensão · Extensão para quem estuda Economia na UFC">
+<meta property="og:description" content="Editais com vaga para Economia, prazos de inscrição e as 78 ações de extensão da FEAAC num só lugar.">
+<meta property="og:url" content="https://caeco-extensao.vercel.app/">
+<meta property="og:image" content="https://caeco-extensao.vercel.app/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Logo do CAECO e o título Extensão para quem estuda Economia na UFC">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://caeco-extensao.vercel.app/og.png">
 <link rel="icon" type="image/png" href="logo-caeco.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -13,7 +26,7 @@
 <style>
 /* Tema escuro único com glassmorphism: fundo com brilhos fixos, superfícies translúcidas com blur. */
 :root{
-  --bg:#03040c; --ink:#eceefc; --muted:#9a9fc4; --faint:#6c7199;
+  --bg:#03040c; --ink:#eceefc; --muted:#9a9fc4; --faint:#868bb5;
   --glass:rgba(255,255,255,.035); --glass-2:rgba(255,255,255,.06); --glass-strong:rgba(6,7,22,.85);
   --edge:rgba(255,255,255,.08); --edge-hi:rgba(255,255,255,.16);
   --accent:#a9adf5; --accent-2:#2f2da3; --accent-ink:#0b0a33; --accent-soft:rgba(120,124,230,.12);
@@ -41,6 +54,8 @@ body{color:var(--ink);font:400 17px/1.55 var(--font-body);-webkit-font-smoothing
 a{color:var(--accent)}
 a:focus-visible,button:focus-visible,input:focus-visible,summary:focus-visible{outline:2px solid var(--hi);outline-offset:3px;border-radius:8px}
 .wrap{max-width:1120px;margin:0 auto;padding:0 20px}
+.pular{position:absolute;left:12px;top:-60px;z-index:20;background:var(--accent);color:var(--accent-ink);padding:10px 14px;border-radius:10px;font-weight:700;text-decoration:none}
+.pular:focus{top:12px}
 .sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
 .glass{background:var(--glass);border:1px solid var(--edge);backdrop-filter:var(--blur);-webkit-backdrop-filter:var(--blur)}
 
@@ -131,6 +146,19 @@ dt{color:var(--muted)} dd{margin:0;font-weight:600}
 .links{margin-top:auto;display:flex;flex-wrap:wrap;gap:8px;padding-top:4px;position:relative;z-index:1}
 .links a{display:inline-flex;align-items:center;gap:6px;font-size:14.5px;font-weight:700;text-decoration:none;padding:8px 12px;border-radius:10px;border:1px solid var(--edge);color:var(--accent);background:rgba(255,255,255,.04);transition:background .15s,border-color .15s,color .15s}
 .links a:hover{border-color:var(--accent);background:var(--accent-soft);color:#fff}
+.prazo{margin:0;display:flex;flex-direction:column;gap:2px;font-size:14px;line-height:1.35;padding:10px 12px;border-radius:10px;background:rgba(255,255,255,.04);border:1px solid var(--edge)}
+.card .prazo{font-size:14px}
+.prazo b{font-weight:700;color:var(--ink)}
+.prazo span{color:var(--muted)}
+.prazo::before{content:"";display:none}
+.prazo.aberto{background:var(--hi-soft);border-color:rgba(169,173,245,.45)}
+.prazo.aberto b{color:var(--hi)}
+.prazo.breve b{color:var(--accent)}
+.prazo.fechado b{color:var(--muted)}
+.sugerir{align-self:flex-start;font-size:13.5px;font-weight:600;color:var(--muted);text-decoration:underline;text-underline-offset:3px}
+.sugerir:hover{color:var(--ink)}
+.copiar{appearance:none;background:none;border:0;padding:0;font:600 15px var(--font-body);color:var(--accent);cursor:pointer;margin-left:auto;margin-right:18px}
+.copiar:hover{text-decoration:underline}
 .row{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap}
 .more{display:flex;flex-direction:column;gap:12px;flex:1}
 .card p.nota{font-size:14.5px;color:var(--muted);line-height:1.45}
@@ -247,6 +275,7 @@ footer p{margin:0;max-width:80ch}
 </style>
 </head>
 <body>
+<a class="pular" href="#projetos">Pular para a lista de projetos</a>
 <div class="aurora" aria-hidden="true"><i></i><i></i><i></i></div>
 <div id="inicio">
   <div class="wrap"><header class="top glass">
@@ -258,13 +287,15 @@ footer p{margin:0;max-width:80ch}
       <a class="pill" href="https://www.ufc.br" target="_blank" rel="noopener">UFC ↗</a>
     </nav>
   </header></div>
+</div>
+<main id="conteudo">
   <div class="wrap hero-body">
     <div>
       <span class="eyebrow glass">Centro Acadêmico de Economia · UFC</span>
       <h1>Extensão para quem estuda <span>Economia na UFC</span></h1>
       <p class="lead">Todas as ações de extensão listadas pela FEAAC, os editais com vaga para Economia e o link da fonte oficial de cada uma, num só lugar.</p>
       <div class="cta">
-        <a class="btn primary" href="#projetos" data-go="vaga">Ver editais com vaga →</a>
+        <a class="btn primary" href="#vagas">Ver editais com vaga →</a>
         <a class="btn ghost glass" href="#como-participar">Como participar</a>
       </div>
     </div>
@@ -275,9 +306,8 @@ footer p{margin:0;max-width:80ch}
       <button class="stat glass fx tilt" type="button" data-go="todos"><b id="s-todos">0</b><span class="lg">ações registradas no total</span><span class="sh">no total</span></button>
     </div>
   </div>
-</div>
 
-<div class="toolbar" id="toolbar">
+<div class="toolbar" id="toolbar" role="search" aria-label="Buscar e filtrar projetos">
   <div class="wrap">
     <div class="search">
       <label class="sr" for="q">Buscar projetos</label>
@@ -295,10 +325,10 @@ footer p{margin:0;max-width:80ch}
   </div>
 </div>
 
-<main>
   <section id="projetos" class="wrap" aria-labelledby="n">
     <div class="listhead">
       <h2 class="count" id="n" aria-live="polite"></h2>
+      <button class="copiar" id="copiar" type="button">Copiar link deste filtro</button>
       <details class="legend">
         <summary>O que significam as siglas?</summary>
         <p class="glass">Siglas usadas pela FEAAC: <b>DTE</b> (Teoria Econômica), <b>DEA</b> (Economia Aplicada), <b>DA</b> (Administração), <b>DC</b> (Contabilidade). "Registrados antes de 2025" são ações que aparecem nas listas de 2019 a 2024 e não estão na lista de 2025; pergunte ao CAECO se seguem ativas.</p>
@@ -310,7 +340,7 @@ footer p{margin:0;max-width:80ch}
   <section class="block" id="como-participar">
     <div class="wrap"><div class="panel glass">
       <div class="sec-head"><small>Passo a passo</small><h2>Como participar</h2></div>
-      <ol class="steps">
+      <ol class="steps" tabindex="0" aria-label="Passos para participar">
         <li><strong>Entenda a regra</strong><p>Quem faz graduação na UFC precisa cumprir no mínimo 10% da carga horária do curso em extensão. Para valer no histórico, você tem que fazer parte da equipe da ação.</p></li>
         <li><strong>Acompanhe os editais</strong><p>A FEAAC e a Pró-Reitoria de Extensão (PREX) divulgam os editais de bolsas e de seleção de Agentes UFC. Os links de cada edital estão nos cartões acima.</p></li>
         <li><strong>Inscreva-se e confirme</strong><p>Leia vagas, carga horária mensal e requisitos no próprio edital. Para projetos sem edital, procure a coordenação pelo Instagram ou pela FEAAC.</p></li>
@@ -463,6 +493,19 @@ const PROJETOS=[
   P("Práticas sociojurídicas na comunidade",["hist"],"FEAAC","Projeto de extensão","Última lista: 2024")
 ];
 
+/* Prazos de inscrição dos editais (datas tiradas dos PDFs oficiais; formato AAAA-MM-DD).
+   Para um edital novo, acrescente uma linha com o nome exato da ação. */
+const PRAZOS={
+  "Práticas Contábeis e Tributárias":{ini:"2026-07-20",fim:"2026-07-24",obs:"Último edital (jul/2026) só teve vagas para Ciências Contábeis"},
+  "CJIP ACCS Proteção Social":{ini:"2026-03-02",fim:"2026-03-06"},
+  "CAAB nas Escolas Viva":{ini:"2025-07-20",fim:"2025-07-30"},
+  "ACCS Apoio à Gestão nas Organizações":{fim:"2025-05-31",obs:"Inscrição contínua até um mês antes do fim da ação (jun/2025)"},
+  "Bolsas de Extensão 2027":{ini:"2027-03-15",fim:"2027-03-18",obs:"Inscrição dos estudantes nos editais das unidades, previstos para 01 a 12/03/2027"}
+};
+
+/* WhatsApp do CAECO para o botão "Sugerir correção" (só números, com 55 + DDD). Vazio = botão escondido. */
+const WHATSAPP="";
+
 const grid=document.getElementById('grid'), q=document.getElementById('q'), n=document.getElementById('n');
 const chips=[...document.querySelectorAll('.chip')];
 let filtro='todos', limite=12;
@@ -482,6 +525,12 @@ function card(p,i){
   k.appendChild(el('span',null,p.tipo));
   c.appendChild(k);
   c.appendChild(el('h3',null,p.nome));
+  const pz=prazo(p);
+  if(pz){
+    const d=el('p','prazo '+pz.tipo);
+    d.appendChild(el('b',null,pz.titulo)); d.append(' '); d.appendChild(el('span',null,pz.detalhe));
+    c.appendChild(d);
+  }
   const row=el('div','row');
   row.appendChild(el('span','status'+(/Confer/.test(p.status)?' warn':/Última|Edição|Edições/.test(p.status)&&p.cats.includes('hist')?' old':''),p.status));
   c.appendChild(row);
@@ -504,6 +553,12 @@ function card(p,i){
     links.forEach(([t,u])=>{const a=el('a',null,t); a.insertAdjacentHTML('beforeend',ARROW); a.href=u; a.target='_blank'; a.rel='noopener'; l.appendChild(a);});
     body.appendChild(l);
   }
+  if(WHATSAPP){
+    const a=el('a','sugerir','Sugerir correção ou informação');
+    a.href='https://wa.me/'+WHATSAPP+'?text='+encodeURIComponent('Olá! Tenho uma correção ou informação para o site CAECO.extensão sobre a ação "'+p.nome+'": ');
+    a.target='_blank'; a.rel='noopener';
+    body.appendChild(a);
+  }
   if(body.childNodes.length){
     body.id='m'+i;
     const t=el('button','toggle'); t.type='button';
@@ -518,8 +573,30 @@ function card(p,i){
   return c;
 }
 
-function setFiltro(f){
+/* Situação do prazo: aberto, em breve ou encerrado, contado a partir de hoje */
+const DIA=864e5;
+const data=s=>{const [a,m,d]=s.split('-').map(Number); return new Date(a,m-1,d);};
+const br=s=>s.split('-').reverse().join('/');
+const dias=n=>n===1?'1 dia':n+' dias';
+function prazo(p){
+  const z=PRAZOS[p.nome]; if(!z) return null;
+  const hoje=new Date(); hoje.setHours(0,0,0,0);
+  const fim=data(z.fim), ini=z.ini?data(z.ini):null;
+  const periodo=(ini?br(z.ini)+' a ':'até ')+br(z.fim);
+  const obs=z.obs?' · '+z.obs:'';
+  if(ini && hoje<ini){const n=Math.round((ini-hoje)/DIA); return {tipo:'breve',ordem:1,titulo:'Inscrições abrem em '+dias(n),detalhe:periodo+obs};}
+  if(hoje<=fim){const n=Math.round((fim-hoje)/DIA); return {tipo:'aberto',ordem:0,titulo:n===0?'Último dia de inscrição!':'Inscrições abertas · faltam '+dias(n),detalhe:periodo+obs};}
+  return {tipo:'fechado',ordem:2,titulo:'Inscrições encerradas',detalhe:periodo+obs};
+}
+
+/* Links diretos para filtros: .../#vagas, #economia, #2025, #eventos, #antigos */
+const HASH={vagas:'vaga',economia:'eco','2025':'ativo',eventos:'evento',antigos:'hist'};
+const HASH_DE=Object.fromEntries(Object.entries(HASH).map(([k,v])=>[v,k]));
+function linkDoFiltro(){ return location.href.split('#')[0]+(HASH_DE[filtro]?'#'+HASH_DE[filtro]:''); }
+
+function setFiltro(f,doHash){
   filtro=f; limite=PASSO;
+  if(!doHash && history.replaceState) history.replaceState(null,'',HASH_DE[f]?'#'+HASH_DE[f]:location.pathname+location.search);
   chips.forEach(x=>x.setAttribute('aria-pressed',String(x.dataset.f===f)));
   render();
 }
@@ -554,6 +631,8 @@ function render(){
     const txt=(p.nome+' '+p.desc+' '+p.tipo+' '+p.depto+' '+p.info.map(i=>i.join(' ')).join(' ')).toLowerCase();
     return txt.includes(t);
   });
+  const ord=p=>{const z=prazo(p); return z?z.ordem:3;};
+  if(filtro==='vaga') lista.sort((a,b)=>ord(a)-ord(b));
   RO.disconnect();
   grid.replaceChildren();
   if(!lista.length){
@@ -581,6 +660,22 @@ document.querySelectorAll('[data-go]').forEach(b=>b.addEventListener('click',e=>
   if(b.tagName==='BUTTON') document.getElementById('projetos').scrollIntoView();
 }));
 q.addEventListener('input',()=>{limite=PASSO; render();});
+
+/* Abre já filtrado quando o link tem #vagas etc. */
+function lerHash(){
+  const f=HASH[decodeURIComponent(location.hash.slice(1))];
+  if(f){ setFiltro(f,true); requestAnimationFrame(()=>document.getElementById('projetos').scrollIntoView()); }
+}
+addEventListener('hashchange',lerHash);
+
+/* Copiar o link do filtro atual */
+const cp=document.getElementById('copiar');
+cp.addEventListener('click',async()=>{
+  const u=linkDoFiltro();
+  try{ await navigator.clipboard.writeText(u); cp.textContent='Link copiado!'; }
+  catch(_){ prompt('Copie o link:',u); }
+  setTimeout(()=>{cp.textContent='Copiar link deste filtro';},2000);
+});
 
 /* Brilho na borda (mouse e toque) e inclinação 3D (só com mouse) */
 const INCLINA=matchMedia('(hover:hover) and (pointer:fine)').matches && !REDUZ;
@@ -612,7 +707,13 @@ toTop.addEventListener('click',()=>scrollTo({top:0}));
 
 
 document.querySelectorAll('.official a, .steps li, .callout, .sec-head').forEach(revela);
-render();
+if(HASH[location.hash.slice(1)]) lerHash(); else render();
+
+/* Contagem de visitas (Vercel Web Analytics, sem cookies). Só carrega no site publicado. */
+if(/^https?:$/.test(location.protocol)){
+  window.va=window.va||function(){(window.vaq=window.vaq||[]).push(arguments);};
+  const sa=document.createElement('script'); sa.defer=true; sa.src='/_vercel/insights/script.js'; document.head.appendChild(sa);
+}
 </script>
 </body>
 </html>
